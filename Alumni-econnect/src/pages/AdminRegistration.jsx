@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 const CreateAccount = ({ setIsLoggedIn }) => {
-  const currentYear = new Date().getFullYear();
-
   const [formValues, setFormValues] = useState({
     first_name: '',
     last_name: '',
@@ -11,7 +9,6 @@ const CreateAccount = ({ setIsLoggedIn }) => {
     password: '',
     password_confirmation: '',
   });
-
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,7 +41,18 @@ const CreateAccount = ({ setIsLoggedIn }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Form submitted:', formValues);
+      const { first_name, last_name, email, contact_number, password, password_confirmation } = formValues;
+
+      const updatedFormValues = {
+        name: `${first_name} ${last_name}`, 
+        email,
+        contact_number,
+        password,
+        password_confirmation,
+      };
+
+      console.log('Form submitted:', updatedFormValues);
+     
     }
   };
 
@@ -62,14 +70,9 @@ const CreateAccount = ({ setIsLoggedIn }) => {
 
           <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
             <div className="max-w-xl lg:max-w-3xl">
-              <a className="block text-[#2D545E]" href="#">
-                <span className="sr-only">Home</span>
-              </a>
-
               <h1 className="mt-6 text-2xl font-bold text-[#000000] sm:text-3xl md:text-4xl">
                 Admin Account Registration
               </h1>
-
               <p className="mt-4 leading-relaxed text-gray-600">
                 Create an account as an admin to manage the alumni network.
               </p>
@@ -85,7 +88,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                     name="first_name"
                     value={formValues.first_name}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1 "
+                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
                     required
                   />
                   {errors.first_name && <p className="mt-2 text-sm text-red-600">{errors.first_name}</p>}
@@ -138,12 +141,10 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                         e.preventDefault();
                       }
                     }}
-                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1 "
+                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
                     required
                   />
-                  {errors.contact_number && (
-                    <p className="mt-2 text-sm text-red-600">{errors.contact_number}</p>
-                  )}
+                  {errors.contact_number && <p className="mt-2 text-sm text-red-600">{errors.contact_number}</p>}
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 relative">
@@ -156,11 +157,10 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                     name="password"
                     value={formValues.password}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1 "
+                    className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
                     required
                   />
                   {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
-
                   <button
                     type="button"
                     className="absolute inset-y-6 bottom-2 right-0 text-[#2D545E] hover:text-gray-600 flex items-center px-2"
@@ -171,10 +171,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                 </div>
 
                 <div className="col-span-6 sm:col-span-3">
-                  <label
-                    htmlFor="PasswordConfirmation"
-                    className="block text-sm font-medium text-[#2D545E]"
-                  >
+                  <label htmlFor="PasswordConfirmation" className="block text-sm font-medium text-[#2D545E]">
                     Confirm Password
                   </label>
                   <input
@@ -186,9 +183,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                     className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
                     required
                   />
-                  {errors.password_confirmation && (
-                    <p className="mt-2 text-sm text-red-600">{errors.password_confirmation}</p>
-                  )}
+                  {errors.password_confirmation && <p className="mt-2 text-sm text-red-600">{errors.password_confirmation}</p>}
                 </div>
 
                 <div className="col-span-6">
