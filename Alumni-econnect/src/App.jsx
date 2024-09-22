@@ -3,7 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import NavDash from "./components/Navbar/NavDash"; // Import Navbar
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import AboutUs from "./pages/AboutUs";
 import PageNotFound from "./pages/PageNotFound";
+import ContactUs from "./pages/ContactUs";
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -23,7 +26,10 @@ const App = () => {
         {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
         {/* <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} /> */}
        
-        {/* <Route path="/about" element={<AboutUsComponent />} /> */}
+        <Route path="/about" element={<AboutUs/>} />
+
+        {/* contactUs route */}
+        <Route path="/contact" element={<ContactUs />} />
         {/* 404 Page route */}
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
