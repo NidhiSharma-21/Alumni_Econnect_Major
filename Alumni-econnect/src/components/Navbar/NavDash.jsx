@@ -34,7 +34,7 @@ const NavDash = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           {/* <img
-            src="" // Add your logo URL here
+            src="" 
             className="h-8"
             alt=""
           /> */}
@@ -77,7 +77,7 @@ const NavDash = () => {
           </button>
         </div>
         <div
-          ref={menuRef} // Attach the ref to this div
+          ref={menuRef} 
           className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? 'block' : 'hidden'}`}
           id="navbar-sticky"
         >
@@ -92,7 +92,7 @@ const NavDash = () => {
             </li>
             <li>
               <Link
-                to="/*"
+                to="/about"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#d27511] md:p-0 dark:text-white dark:hover:bg-gray-700 font-semibold"
               >
                 About Us

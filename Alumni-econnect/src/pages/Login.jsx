@@ -93,6 +93,7 @@ const Login = ({ setIsLoggedIn }) => {
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
                     <option value="admin">Admin</option>
+                    <option value="developer">Developer</option>
                   </select>
                   {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role}</p>}
                 </div>
