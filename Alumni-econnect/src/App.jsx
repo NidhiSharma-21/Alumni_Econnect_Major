@@ -4,6 +4,7 @@ import NavDash from "./components/Navbar/NavDash"; // Import Navbar
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import PageNotFound from "./pages/PageNotFound";
+import CreateAccount from "./pages/AdminRegistration";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -21,9 +22,7 @@ const App = () => {
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
 
         {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
-        {/* <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} /> */}
-       
-        {/* <Route path="/about" element={<AboutUsComponent />} /> */}
+        <Route path="/adminaccount" element={<CreateAccount/>} />
         {/* 404 Page route */}
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
