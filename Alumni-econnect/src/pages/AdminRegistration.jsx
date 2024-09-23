@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const CreateAccount = ({ setIsLoggedIn }) => {
   const [formValues, setFormValues] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    contact_number: '',
+    name: '',
+    
+    gmail: '',
+    mobileNumber: '',
     password: '',
     password_confirmation: '',
   });
@@ -17,43 +19,68 @@ const CreateAccount = ({ setIsLoggedIn }) => {
   };
 
   const handlePasswordToggle = () => {
-    setShowPassword(!showPassword);
+ try {
+     setShowPassword(!showPassword);
+    } catch (error) {
+  
+    }
   };
+   const validateForm = () => {
+     const newErrors = {};
+     const { name, gmail, mobaileNumber, password, password_confirmation } = formValues;
+ 
+     if (!name) newErrors.name = 'Name is required';
+     
+     if (!gmail) newErrors.email = 'Email is required';
+     else if (!/\S+@\S+\.\S+/.test(gmail)) newErrors.gmail = 'gmail is invalid';
+     if (!mobaileNumber) newErrors.mobaileNumber = 'Contact number is required';
+     else if (!/^\d+$/.test(mobaileNumber)) newErrors.mobaileNumber = 'Contact number must be numbers only';
+     if (!password) newErrors.password = 'Password is required';
+     if (!password_confirmation) newErrors.password_confirmation = 'Password confirmation is required';
+     else if (password !== password_confirmation) newErrors.password_confirmation = 'Passwords do not match';
+ 
+     setErrors(newErrors);
+     return Object.keys(newErrors).length === 0;
+   };
+   // const getBranch = async() =>{
+   //   try{
+   //     const data= await axios.get("https://localhost:7002/api/Branch");
+   //     console.log(data);
+   //   }catch(e){
+   //     console.log(e);
+   //   }
+   // }
 
-  const validateForm = () => {
-    const newErrors = {};
-    const { first_name, last_name, email, contact_number, password, password_confirmation } = formValues;
 
-    if (!first_name) newErrors.first_name = 'First Name is required';
-    if (!last_name) newErrors.last_name = 'Last Name is required';
-    if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
-    if (!contact_number) newErrors.contact_number = 'Contact number is required';
-    else if (!/^\d+$/.test(contact_number)) newErrors.contact_number = 'Contact number must be numbers only';
-    if (!password) newErrors.password = 'Password is required';
-    if (!password_confirmation) newErrors.password_confirmation = 'Password confirmation is required';
-    else if (password !== password_confirmation) newErrors.password_confirmation = 'Passwords do not match';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  // getBranch();
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (validateForm()) {
-      const { first_name, last_name, email, contact_number, password, password_confirmation } = formValues;
+      const { name, gmail, mobaileNumber, password, password_confirmation } = formValues;
 
       const updatedFormValues = {
-        name: `${first_name} ${last_name}`, 
-        email,
-        contact_number,
+        name, 
+        gmail,
+        mobaileNumber,
         password,
         password_confirmation,
       };
+      
 
       console.log('Form submitted:', updatedFormValues);
      
     }
+   
+    try {
+      
+      const {data}=await axios.post('https://localhost:7002/api/User/AddAdmin',formValues);
+      console.log(data);
+      console.log("Registration successfull");
+      
+    } catch (error) {
+      console.log(error);
+    }
+    
   };
 
   return (
@@ -78,14 +105,14 @@ const CreateAccount = ({ setIsLoggedIn }) => {
               </p>
 
               <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-3">
+                <div className="col-span-6 ">
                   <label htmlFor="FirstName" className="block text-sm font-medium text-[#2D545E]">
-                    First Name
+                    Enter Your Name
                   </label>
                   <input
                     type="text"
-                    id="FirstName"
-                    name="first_name"
+                    id="Name"
+                    name="name"
                     value={formValues.first_name}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
@@ -94,7 +121,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                   {errors.first_name && <p className="mt-2 text-sm text-red-600">{errors.first_name}</p>}
                 </div>
 
-                <div className="col-span-6 sm:col-span-3">
+                {/* <div className="col-span-6 sm:col-span-3">
                   <label htmlFor="LastName" className="block text-sm font-medium text-[#2D545E]">
                     Last Name
                   </label>
@@ -108,22 +135,22 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                     required
                   />
                   {errors.last_name && <p className="mt-2 text-sm text-red-600">{errors.last_name}</p>}
-                </div>
+                </div> */}
 
                 <div className="col-span-6">
                   <label htmlFor="Email" className="block text-sm font-medium text-[#2D545E]">
                     Email
                   </label>
                   <input
-                    type="email"
-                    id="Email"
-                    name="email"
-                    value={formValues.email}
+                    type="gmail"
+                    id="gmail"
+                    name="gmail"
+                    value={formValues.gmail}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-md border border-gray-400 bg-white text-sm text-gray-700 shadow-sm p-1"
                     required
                   />
-                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
+                  {errors.gmail && <p className="mt-2 text-sm text-red-600">{errors.gmail}</p>}
                 </div>
 
                 <div className="col-span-6">
@@ -133,8 +160,8 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                   <input
                     type="text"
                     id="ContactNumber"
-                    name="contact_number"
-                    value={formValues.contact_number}
+                    name="mobileNumber"
+                    value={formValues.mobileNumber}
                     onChange={handleChange}
                     onKeyPress={(e) => {
                       if (!/[0-9]/.test(e.key)) {
@@ -190,6 +217,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
                   <button
                     type="submit"
                     className="w-full rounded-md bg-[#D27511] py-2 px-4 text-sm font-medium text-white shadow focus:outline-none focus:ring-2 focus:ring-[#D27511] focus:ring-offset-2 focus:ring-offset-gray-100"
+                    // onClick={Submithandler}
                   >
                     Create Account
                   </button>
