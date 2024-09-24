@@ -1,0 +1,21 @@
+[33meeec9ea[m[33m ([m[1;36mHEAD -> [m[1;32mAlumni_Econnect2nd_Base[m[33m)[m HEAD@{0}: pull: Merge made by the 'ort' strategy.
+[33mf3eae08[m HEAD@{1}: commit: removed merge conflicts
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{2}: checkout: moving from About_Us to Alumni_Econnect2nd_Base
+[33mfe88399[m[33m ([m[1;32mAbout_Us[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33mfe88399[m[33m ([m[1;32mAbout_Us[m[33m)[m HEAD@{4}: commit: About page
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: checkout: moving from About_Us to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{6}: checkout: moving from Alumni_Econnect2nd_Base to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{7}: checkout: moving from Alumni_Econnect2nd_Base to Alumni_Econnect2nd_Base
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{8}: checkout: moving from About_Us to Alumni_Econnect2nd_Base
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{9}: checkout: moving from Alumni_Econnect2nd_Base to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{10}: checkout: moving from main to Alumni_Econnect2nd_Base
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{11}: checkout: moving from Alumni_Econnect2nd_Base to main
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{12}: checkout: moving from About_Us to Alumni_Econnect2nd_Base
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{13}: checkout: moving from Alumni_Econnect2nd_Base to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{14}: checkout: moving from About_Us to Alumni_Econnect2nd_Base
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{15}: checkout: moving from About_Us to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{16}: checkout: moving from main to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{17}: checkout: moving from main to main
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{18}: checkout: moving from About_Us to main
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{19}: checkout: moving from main to About_Us
+[33m4a3bd9a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/About_Us[m[33m, [m[1;32mmain[m[33m)[m HEAD@{20}: clone: from https://github.com/NidhiSharma-21/Alumni_Econnect_Major
