@@ -12,6 +12,9 @@ const UserRegistration = () => {
     endDate: '',
     password: '',
     confirmPassword: '',
+    collegeId: '',
+    course: '',
+    branch: ''
   });
 
   const [emailVerified, setEmailVerified] = useState(false);
@@ -111,10 +114,17 @@ const UserRegistration = () => {
       return;
     }
 
+    if(!formData.confirmPassword){
+      setCreateAccountErrorMessage('Please fill out this field');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setCreateAccountErrorMessage('Passwords do not match.');
       return;
     }
+
+    
 
     // Handle form submission logic
     console.log('Form Data:', formData);
@@ -231,24 +241,11 @@ const UserRegistration = () => {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m0 0l6 6m-6-6l6-6" />
                 </svg>
-                <h2 className="text-center text-2xl font-bold text-[#d27511]">
-                  Step 2: Graduation Details
-                </h2>
+                <h2 className="text-2xl font-bold text-[#d27511]">Step 2: Graduation Details</h2>
               </div>
-              <form onSubmit={handleSubmit}>
+              <form>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Graduation Year:</label>
-                  <input
-                    type="text"
-                    name="graduationYear"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.graduationYear}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Start Date:</label>
+                  <label className="block font-semibold text-gray-700 mb-2">Graduation Start Date:</label>
                   <input
                     type="date"
                     name="startDate"
@@ -259,7 +256,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">End Date:</label>
+                  <label className="block font-semibold text-gray-700 mb-2">Graduation End Date:</label>
                   <input
                     type="date"
                     name="endDate"
@@ -269,6 +266,53 @@ const UserRegistration = () => {
                     required
                   />
                 </div>
+                <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">Graduation Year:</label>
+                  <input
+                    type="number"
+                    name="graduationYear"
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
+                    value={formData.graduationYear}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Additional fields for College ID, Course, and Branch */}
+                <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">College ID:</label>
+                  <input
+                    type="text"
+                    name="collegeId"
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
+                    value={formData.collegeId}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">Course:</label>
+                  <input
+                    type="text"
+                    name="course"
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
+                    value={formData.course}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">Branch:</label>
+                  <input
+                    type="text"
+                    name="branch"
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
                 <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">Password:</label>
                   <input
@@ -291,22 +335,17 @@ const UserRegistration = () => {
                     onChange={handleChange}
                     required
                   />
+                  {createAccountErrorMessage && <p className="text-red-500 text-sm mt-2">{createAccountErrorMessage}</p>}
                 </div>
-                {createAccountErrorMessage && (
-                  <p className="text-red-500 text-sm mt-2 text-center">
-                    {createAccountErrorMessage}
-                  </p>
-                )}
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
+                  onClick={handleSubmit}
                 >
                   Create Account
                 </button>
                 {accountCreatedMessage && (
-                  <p className="text-green-700 text-m mt-4 text-center">
-                    {accountCreatedMessage}
-                  </p>
+                  <p className="text-center text-green-600 text-sm mt-4">{accountCreatedMessage}</p>
                 )}
               </form>
             </div>
