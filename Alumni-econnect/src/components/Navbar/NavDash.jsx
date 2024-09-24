@@ -43,7 +43,7 @@ const NavDash = () => {
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <Link to="/adminaccount">
+          <Link to="/*">
             <button
               type="button"
               className="text-white bg-[#2d545e] hover:bg-[#3f7b88] font-semibold rounded-lg text-sm px-4 py-2 text-center  dark:hover:bg-[#2d545e]"
