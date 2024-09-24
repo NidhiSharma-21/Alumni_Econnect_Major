@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import PageNotFound from "./pages/PageNotFound";
 import CreateAccount from "./pages/AdminRegistration";
 import AboutUs from "./pages/AboutUs";
+import UserRegistration from "./pages/UserRegistration";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -25,8 +26,13 @@ const App = () => {
         {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
         <Route path="/adminaccount" element={<CreateAccount/>} />
         <Route path="/about" element={<AboutUs/>}/>
+
+        {/* User Registration route */}
+        <Route path="/userregistration" element={<UserRegistration/>}/>
+          
         {/* 404 Page route */}
         <Route path="/*" element={<PageNotFound />} />
+
       </Routes>
     </div>
   );
