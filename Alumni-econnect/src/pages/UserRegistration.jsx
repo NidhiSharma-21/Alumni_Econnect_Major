@@ -53,7 +53,7 @@ const UserRegistration = () => {
             newData.collegeName = 'Gyan Ganga College of Technology';
             break;
           case 'ggits.co.in':
-            newData.collegeName = 'Gyan Ganga Institute of Technology';
+            newData.collegeName = 'Gyan Ganga Institute of Technology and Sciences';
             break;
           default:
             newData.collegeName = '';
@@ -76,7 +76,7 @@ const UserRegistration = () => {
 
   const handleEmailVerification = () => {
     if (!formData.name || !formData.collegeEmail) {
-      setCollegeErrorMessage('Both name and college email are required.');
+      setCollegeErrorMessage('Name and College Email ID both are required.');
       return;
     }
 
