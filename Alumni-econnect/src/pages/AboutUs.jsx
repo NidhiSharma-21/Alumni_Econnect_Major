@@ -1,49 +1,52 @@
-import React from 'react'
-import aboutsvg from "../assets/aboutUs.png"
-import about2 from "../assets/aboutUs2-.png"
-import MeetOurTeam from '../components/AboutComponent.jsx/MeetOurTeam'
-import AlumniEconnectFooter from '../components/FooterComponent/FooterComponent'
+import React from 'react';
+import aboutsvg from '../assets/aboutUs.svg';
+import about2 from '../assets/aboutUs2-.png';
+import MeetOurTeam from '../components/AboutComponent/MeetOurTeam';
+import AlumniEconnectFooter from '../components/FooterComponent/FooterComponent';
 
 const AboutUs = () => {
-    return (
-        <>
-        <section className="py-12 mt-6">
-            <div className='flex items-center p-8' >
-                <div className='w-[100%] p-8 m-4'>
-                    <h6 className="mt-6 text-3xl font-bold text-[#2d545e] sm:text-4xl md:text-5xl">
-                        About Us</h6>
-                    <p className="mt-4 text-lg leading-relaxed text-gray-400">
-                        Our mission is to create a dynamic community where alumni can stay engaged, network, and give back to the institution that shaped their academic and professional journeys. Through a comprehensive web and mobile platform, we offer alumni the ability to register, share their success stories, explore job opportunities, connect with peers, and contribute to the growth of the college. By facilitating lifelong relationships, professional development, and philanthropy, we aim to build a vibrant and supportive alumni community for years to come.
-                    </p>
-                </div>
-                <div className='w-[100%]'>
-                    <img className='w-[100%] mt-5 ' src={aboutsvg} alt="" />
-                </div>
-            </div>
+  return (
+    <>
+      {/* First section with About Us and image */}
+      <section className="py-12 mt-6 bg-[#f0f4f8]">
+        <div className="container mx-auto flex flex-wrap items-center justify-between p-8">
+          <div className="w-full md:w-1/2 p-6">
+            <h2 className="text-5xl font-extrabold text-[#2d545e] mb-6">
+              Welcome to Our Community
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-700 mb-6">
+            Our mission is to create a dynamic community where alumni can stay engaged, network, and give back to the institution that shaped their journeys. We strive to foster a sense of belonging and pride among alumni by providing platforms for collaboration, mentorship, and professional development. Through innovative events, resources, and communication, we aim to bridge the gap between current students and alumni, ensuring that the wealth of knowledge and experience within our community is shared and utilized.
+            </p>
+            <a href="/" className="inline-block px-6 py-3 text-white bg-[#2d545e] rounded-full shadow-lg hover:bg-[#1a3b41] transition duration-300">
+              Learn More
+            </a>
+          </div>
+          <div className="w-full md:w-1/2 p-6">
+            <img className="w-full h-auto " src={aboutsvg} alt="About Us" />
+          </div>
+        </div>
+      </section>
 
-            <div className='flex items-center'>
-                <div className='px-6 w-[100%]'>
-                    <img className='object-cover w-full h-full sm:w-3/4 sm:h-auto md:w-2/3 md:h-auto lg:w-[65%] lg:h-auto' src={about2} alt="" />
-                </div>
-                <div className='pr-10 w-[100%]'>
-                    <h6 className="mt-6 text-3xl font-bold text-[#2d545e] sm:text-4xl md:text-5xl">
-                    Our Mission: Build Connections Between Alumni
-                    </h6>
-                    <p className="mt-4 text-lg leading-relaxed text-gray-400">
-                    Our mission is to create a dynamic community where alumni can stay engaged, network, and give back to the institution that shaped their academic and professional journeys.
-                    </p>
-                </div>
-            </div>
+      {/* Second section with Mission and image */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto flex flex-wrap items-center justify-between p-8">
+          <div className="w-full md:w-1/2 p-6">
+            <img className="w-full h-auto" src={about2} alt="Our Mission" />
+          </div>
+          <div className="w-full md:w-1/2 p-6">
+            <h2 className="text-5xl font-extrabold text-[#2d545e] mb-6">
+              Our Mission
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-700">
+              We aim to build a vibrant and supportive alumni community for years to come, fostering connections and opportunities for personal and professional growth.We believe that by strengthening these ties, we can create a legacy of excellence and impact that benefits both our alumni and the institution as a whole. Together, we will cultivate a culture of lifelong learning, innovation, and service, ensuring that every alumni feels valued and connected.
+            </p>
+          </div>
+        </div>
+      </section>
+      <MeetOurTeam />
+      <AlumniEconnectFooter />
+    </>
+  );
+};
 
-        </section>
-        <section>
-                <MeetOurTeam/>
-                
-        </section>
-        <AlumniEconnectFooter/>
-        </>
-
-    )
-}
-
-export default AboutUs
+export default AboutUs;

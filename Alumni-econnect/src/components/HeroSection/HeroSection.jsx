@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <section className="bg-white dark:bg-gray-900 lg:mt-16 mt-16">
+    <section className="bg-white dark:bg-gray-900 lg:mt-16 mt-16 mb-6">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
       <div className=" lg:mt-0 lg:col-span-5 lg:flex">
           <img
@@ -15,10 +15,9 @@ const HeroSection = () => {
             Alumni-Econnect: Stay Connected, Stay Informed
           </h1>
           <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-            Join your alumni community and explore opportunities for networking, events, and updates.
-          </p>
+          Join your alumni community and explore opportunities for networking, events, and updates. Connect with fellow graduates who share your passion and experiences, and tap into a wealth of resources designed to enhance your professional journey.           </p>
           <a
-            href="#"
+            href="/userregistration"
             className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-white bg-[#d27511] rounded-lg hover:bg-[#c4640e]"
           >
             Join Now

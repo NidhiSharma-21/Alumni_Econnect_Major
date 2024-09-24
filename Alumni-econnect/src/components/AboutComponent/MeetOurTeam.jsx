@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import Loop from "../../assets/logo.png" // Import the image
-// import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
-// Sample team members data with work description
 const teamMembers = [
   { 
     name: "Jay Chourasiya", 
@@ -50,28 +47,24 @@ const MeetOurTeam = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
-  // Move to the next slide
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % teamMembers.length);
   };
 
-  // Move to the previous slide
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + teamMembers.length) % teamMembers.length);
   };
 
-  // Auto-slide every 3 seconds for small screens
   useEffect(() => {
     let intervalId;
     if (isSmallScreen) {
-      intervalId = setInterval(nextSlide, 3000); // 3000ms = 3 seconds
+      intervalId = setInterval(nextSlide, 3000);
     } else {
-      setCurrentIndex(0); // Reset index when switching to larger screens
+      setCurrentIndex(0);
     }
-    return () => clearInterval(intervalId); // Clear interval on component unmount or screen size change
+    return () => clearInterval(intervalId);
   }, [isSmallScreen]);
 
-  // Update screen size on resize
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768);
@@ -81,36 +74,30 @@ const MeetOurTeam = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 mt-0 relative">
+    <div className="bg-gray-100 mt-0 relative pb-12">
       <div className="container mx-auto px-6 text-center">
         <div className="mb-4 relative">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-6 mt-4 flex items-center justify-center">
-            Meet Our Teams
-            {/* <img
-              src={Loop}
-              alt="Loop"
-              className="ml-3 w-10 h-10 inline" 
-            /> */}
+          <h2 className={`text-${isSmallScreen ? '2xl' : '4xl'} font-bold text-gray-800 mb-6 flex items-center justify-center`}>
+            Meet Our Team
           </h2>
         </div>
         <p className="text-lg text-gray-600 mb-12">
           Meet the talented team behind this project. We are a group of students passionate about creating innovative solutions.
         </p>
         <div className="relative">
-          {/* Navigation buttons for smaller screens only */}
           {isSmallScreen && (
             <>
               <button
                 className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 text-gray-800 hover:text-gray-600 focus:outline-none"
                 onClick={prevSlide}
               >
-                {/* <ChevronLeftIcon className="w-6 h-6" /> */}
+                {/* Left Icon */}
               </button>
               <button
                 className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 text-gray-800 hover:text-gray-600 focus:outline-none"
                 onClick={nextSlide}
               >
-                {/* <ChevronRightIcon className="w-6 h-6" /> */}
+                {/* Right Icon */}
               </button>
             </>
           )}
@@ -132,12 +119,10 @@ const MeetOurTeam = () => {
                     />
                     <h3 className="text-lg font-semibold">{member.name}</h3>
                     <p className="text-sm text-gray-600">{member.role}</p>
-                    {/* Set fixed height for description */}
                     <p className="text-sm text-gray-500 mt-2 h-16 flex-grow">
                       {member.description}
                     </p>
                     <div className="flex mt-auto space-x-4">
-                      {/* LinkedIn Icon */}
                       <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
                         <img
                           src="https://raw.githubusercontent.com/gist/sebastianmarines/ab8da37c9cec1198f424ea343a090f4c/raw/1877a68ed40a84838da52b9c4b9416ac3d91a418/linkedin.svg"
@@ -145,7 +130,6 @@ const MeetOurTeam = () => {
                           className="w-6 h-6"
                         />
                       </a>
-                      {/* GitHub Icon */}
                       <a href={member.github} target="_blank" rel="noopener noreferrer">
                         <img
                           src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
