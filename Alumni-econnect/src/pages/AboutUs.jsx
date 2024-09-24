@@ -27,7 +27,7 @@ const AboutUs = () => {
                 </div>
                 <div className='pr-10 w-[100%]'>
                     <h6 className="mt-6 text-3xl font-bold text-[#2d545e] sm:text-4xl md:text-5xl">
-                        Our Mission:Buil Connection Between Alumnis
+                    Our Mission: Build Connections Between Alumni
                     </h6>
                     <p className="mt-4 text-lg leading-relaxed text-gray-400">
                     Our mission is to create a dynamic community where alumni can stay engaged, network, and give back to the institution that shaped their academic and professional journeys.
