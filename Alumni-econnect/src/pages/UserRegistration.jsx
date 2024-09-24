@@ -22,20 +22,71 @@ const UserRegistration = () => {
   const [accountCreatedMessage, setAccountCreatedMessage] = useState('');
   const [otpErrorMessage, setOtpErrorMessage] = useState('');
   const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('');
+  const [collegeErrorMessage, setCollegeErrorMessage] = useState('');
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    // Reset error messages if college email is modified
+    if (name === 'collegeEmail') {
+      setCollegeErrorMessage('');
+    }
+    
+    if (otpSent && (name === 'name' || name === 'collegeEmail')) {
+      // Reset OTP and related states
+      setOtpSent(false);
+      setFormData((prevData) => ({ ...prevData, otp: '' })); 
+      setEmailVerified(false); 
+      setOtpVerifiedMessage('');
+      setOtpErrorMessage('');
+      setCollegeErrorMessage('You have modified your details. Please verify your email again.');
+    }
+
+    setFormData((prevData) => {
+      const newData = { ...prevData, [name]: value };
+
+      // Autofill college name based on email domain
+      if (name === 'collegeEmail') {
+        const domain = value.split('@')[1];
+        switch (domain) {
+          case 'ggct.co.in':
+            newData.collegeName = 'Gyan Ganga College of Technology';
+            break;
+          case 'ggits.co.in':
+            newData.collegeName = 'Gyan Ganga Institute of Technology';
+            break;
+          default:
+            newData.collegeName = '';
+            break;
+        }
+      }
+
+      return newData;
     });
 
-    if (e.target.name === 'password' && e.target.value.length >= 8) {
+    if (name === 'password' && value.length >= 8) {
       setPasswordError('');
+    }
+
+    // Clear college error message if the college name is filled
+    if (name === 'collegeName' && value) {
+      setCollegeErrorMessage('');
     }
   };
 
   const handleEmailVerification = () => {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
+    if (!formData.name || !formData.collegeEmail) {
+      setCollegeErrorMessage('Both name and college email are required.');
+      return;
+    }
+
+    const domain = formData.collegeEmail.split('@')[1];
+    if (!domain || (domain !== 'ggct.co.in' && domain !== 'ggits.co.in')) {
+      setCollegeErrorMessage('Your college is not tier up.');
+      return;
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
     setGeneratedOtp(otp);
     setOtpSent(true);
     console.log(`OTP sent to ${formData.collegeEmail}: ${otp}`); // Replace with actual email sending logic
@@ -46,7 +97,7 @@ const UserRegistration = () => {
       setEmailVerified(true);
       setStep(2);
       setOtpVerifiedMessage('OTP has been verified successfully.');
-      setOtpErrorMessage('');  // Clear any previous error
+      setOtpErrorMessage('');
     } else {
       setOtpErrorMessage('Invalid OTP. Please try again.');
     }
@@ -68,12 +119,21 @@ const UserRegistration = () => {
     // Handle form submission logic
     console.log('Form Data:', formData);
     setAccountCreatedMessage('Your account has been created successfully!');
-    setCreateAccountErrorMessage('');  // Clear any previous error
+    setCreateAccountErrorMessage(''); 
+  };
+
+  const handleBackToStep1 = () => {
+    setStep(1);
+    setOtpSent(false); 
+    setFormData({ ...formData, otp: '' });
+    setEmailVerified(false); 
+    setOtpVerifiedMessage(''); 
+    setOtpErrorMessage(''); 
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-5">
-      <div className="w-full max-w-2xl h-auto mt-10 md:mt-26 lg:mt-20"> {/* Increased width */}
+      <div className="w-full max-w-2xl h-auto mt-10 md:mt-26 lg:mt-20">
         <div className="bg-white shadow-lg rounded-lg p-8 space-y-6">
           {step === 1 && (
             <div className="step-1">
@@ -85,9 +145,7 @@ const UserRegistration = () => {
               </h2>
               <form>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    Name:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">Name:</label>
                   <input
                     type="text"
                     name="name"
@@ -98,22 +156,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    College Name:
-                  </label>
-                  <input
-                    type="text"
-                    name="collegeName"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.collegeName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    College Email ID:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">College Email ID:</label>
                   <input
                     type="email"
                     name="collegeEmail"
@@ -122,6 +165,19 @@ const UserRegistration = () => {
                     onChange={handleChange}
                     required
                   />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">College Name:</label>
+                  <input
+                    type="text"
+                    name="collegeName"
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
+                    value={formData.collegeName}
+                    readOnly 
+                  />
+                  {collegeErrorMessage && (
+                    <p className="text-red-500 text-sm mt-2">{collegeErrorMessage}</p>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -164,14 +220,24 @@ const UserRegistration = () => {
 
           {step === 2 && emailVerified && (
             <div className="step-2">
-              <h2 className="text-center text-2xl font-bold mb-6 text-[#d27511]">
-                Step 2: Graduation Details
-              </h2>
+              <div className="flex items-center mb-6">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 cursor-pointer text-[#d27511] mr-2"
+                  onClick={handleBackToStep1}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m0 0l6 6m-6-6l6-6" />
+                </svg>
+                <h2 className="text-center text-2xl font-bold text-[#d27511]">
+                  Step 2: Graduation Details
+                </h2>
+              </div>
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    Graduation Year:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">Graduation Year:</label>
                   <input
                     type="text"
                     name="graduationYear"
@@ -182,9 +248,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    Start Date:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">Start Date:</label>
                   <input
                     type="date"
                     name="startDate"
@@ -195,9 +259,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    End Date:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">End Date:</label>
                   <input
                     type="date"
                     name="endDate"
@@ -208,9 +270,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    Password:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">Password:</label>
                   <input
                     type="password"
                     name="password"
@@ -222,9 +282,7 @@ const UserRegistration = () => {
                   {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    Confirm Password:
-                  </label>
+                  <label className="block font-semibold text-gray-700 mb-2">Confirm Password:</label>
                   <input
                     type="password"
                     name="confirmPassword"
@@ -246,7 +304,7 @@ const UserRegistration = () => {
                   Create Account
                 </button>
                 {accountCreatedMessage && (
-                  <p className="text-green-700 text-m mt-4 text-center"> {/* Changed color to darker green */}
+                  <p className="text-green-700 text-m mt-4 text-center">
                     {accountCreatedMessage}
                   </p>
                 )}
