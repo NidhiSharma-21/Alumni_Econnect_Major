@@ -112,7 +112,6 @@ const CollegeRegistration = () => {
     e.preventDefault();
     if (validateForm()) {
       console.log('Form submitted:', formValues);
-      // Here you would typically send the data to your API
     }
   };
 
