@@ -43,7 +43,7 @@ const Login = ({ setIsLoggedIn }) => {
   };
 
   const handleSignUpRedirect = () => {
-    navigate('/signup');
+    navigate('/userregistration');
   };
 
   const handleForgotPassword = () => {
