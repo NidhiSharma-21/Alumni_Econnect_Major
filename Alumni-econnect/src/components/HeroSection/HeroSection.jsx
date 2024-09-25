@@ -35,7 +35,7 @@ const HeroSection = () => {
             </svg>
           </a>
           <a
-            href="#"
+            href="/features"
             className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-gray-900 border border-gray-300 rounded-lg hover:text-[#2d545e] hover:border-[#2d545e]"
           >
             Explore Now

@@ -8,6 +8,8 @@ import CreateAccount from "./pages/AdminRegistration";
 import CollegeRegistration from "./pages/CollegeFunctionalites";
 import AboutUs from "./pages/AboutUs";
 import UserRegistration from "./pages/UserRegistration";
+import FeatureSection from "./components/FeaturesCard/Feature";
+import AlumniFeatures from "./pages/Features";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -26,6 +28,7 @@ const App = () => {
 
         {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
         <Route path="/adminaccount" element={<CreateAccount/>} />
+        <Route path="/features" element={<AlumniFeatures/>} />
         <Route path="/collegefunctions" element={<CollegeRegistration/>} />
         <Route path="/about" element={<AboutUs/>}/>
 
