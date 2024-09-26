@@ -10,6 +10,7 @@ import AboutUs from "./pages/AboutUs";
 import UserRegistration from "./pages/UserRegistration";
 import FeatureSection from "./components/FeaturesCard/Feature";
 import AlumniFeatures from "./pages/Features";
+import FacultyRegistration from "./pages/FacultyRegistration";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -34,6 +35,9 @@ const App = () => {
 
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
+
+        {/* Faculty Registration route */}
+        <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
           
         {/* 404 Page route */}
         <Route path="/*" element={<PageNotFound />} />
