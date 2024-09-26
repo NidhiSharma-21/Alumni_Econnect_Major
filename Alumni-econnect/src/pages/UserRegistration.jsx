@@ -1,136 +1,17 @@
 import React, { useState } from 'react';
-
+import { Controller, useForm } from 'react-hook-form';
+import Input from '../components/Shared/Input/Input';
+import { userService } from '../services/userServices';
 const UserRegistration = () => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    collegeName: '',
-    collegeEmail: '',
-    otp: '',
-    graduationYear: '',
-    startDate: '',
-    endDate: '',
-    password: '',
-    confirmPassword: '',
-    collegeId: '',
-    course: '',
-    branch: ''
-  });
 
+  const { register, control, handleSubmit } = useForm();
+
+  const [step, setStep] = useState(1);
   const [emailVerified, setEmailVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [otpVerifiedMessage, setOtpVerifiedMessage] = useState('');
-  const [accountCreatedMessage, setAccountCreatedMessage] = useState('');
-  const [otpErrorMessage, setOtpErrorMessage] = useState('');
-  const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('');
-  const [collegeErrorMessage, setCollegeErrorMessage] = useState('');
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Reset error messages if college email is modified
-    if (name === 'collegeEmail') {
-      setCollegeErrorMessage('');
-    }
-    
-    if (otpSent && (name === 'name' || name === 'collegeEmail')) {
-      // Reset OTP and related states
-      setOtpSent(false);
-      setFormData((prevData) => ({ ...prevData, otp: '' })); 
-      setEmailVerified(false); 
-      setOtpVerifiedMessage('');
-      setOtpErrorMessage('');
-      setCollegeErrorMessage('You have modified your details. Please verify your email again.');
-    }
-
-    setFormData((prevData) => {
-      const newData = { ...prevData, [name]: value };
-
-      // Autofill college name based on email domain
-      if (name === 'collegeEmail') {
-        const domain = value.split('@')[1];
-        switch (domain) {
-          case 'ggct.co.in':
-            newData.collegeName = 'Gyan Ganga College of Technology';
-            break;
-          case 'ggits.co.in':
-            newData.collegeName = 'Gyan Ganga Institute of Technology';
-            break;
-          default:
-            newData.collegeName = '';
-            break;
-        }
-      }
-
-      return newData;
-    });
-
-    if (name === 'password' && value.length >= 8) {
-      setPasswordError('');
-    }
-
-    // Clear college error message if the college name is filled
-    if (name === 'collegeName' && value) {
-      setCollegeErrorMessage('');
-    }
-  };
-
-  const handleEmailVerification = () => {
-    if (!formData.name || !formData.collegeEmail) {
-      setCollegeErrorMessage('Both name and college email are required.');
-      return;
-    }
-
-    const domain = formData.collegeEmail.split('@')[1];
-    if (!domain || (domain !== 'ggct.co.in' && domain !== 'ggits.co.in')) {
-      setCollegeErrorMessage('Your college is not tier up.');
-      return;
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
-    setGeneratedOtp(otp);
-    setOtpSent(true);
-    console.log(`OTP sent to ${formData.collegeEmail}: ${otp}`); // Replace with actual email sending logic
-  };
-
-  const handleOtpVerification = () => {
-    if (formData.otp === generatedOtp) {
-      setEmailVerified(true);
-      setStep(2);
-      setOtpVerifiedMessage('OTP has been verified successfully.');
-      setOtpErrorMessage('');
-    } else {
-      setOtpErrorMessage('Invalid OTP. Please try again.');
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (formData.password.length < 8) {
-      setPasswordError('Password must be at least 8 characters long.');
-      return;
-    }
-
-    if(!formData.confirmPassword){
-      setCreateAccountErrorMessage('Please fill out this field');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setCreateAccountErrorMessage('Passwords do not match.');
-      return;
-    }
-
-    
-
-    // Handle form submission logic
-    console.log('Form Data:', formData);
-    setAccountCreatedMessage('Your account has been created successfully!');
-    setCreateAccountErrorMessage(''); 
-  };
+  const [collegeId, setCollegeId] = useState('');
+  const [courses, setCourses] = useState([])
+  const [branches, setBranches] = useState([])
 
   const handleBackToStep1 = () => {
     setStep(1);
@@ -140,7 +21,55 @@ const UserRegistration = () => {
     setOtpVerifiedMessage(''); 
     setOtpErrorMessage(''); 
   };
+  const onSubmit1 = async (data) => {
+    try {
+      console.log("Form1 Data : ", data);
+      const response = await userService.sendOTP(data.gmail, data.name);
+      console.log("Response : ", response);
+      setOtpSent(true);
 
+      const domain = '@'+ data.gmail.split('@')[1];
+      const collegeDomain = encodeURIComponent(domain);
+
+      const collegeIdResponse = await userService.getCollegeId(collegeDomain);
+      console.log("College Id : ", collegeIdResponse);
+      setCollegeId(collegeIdResponse.data.id);
+    } catch (error) {
+      
+    }
+  }
+
+  const optVerify = async(data) => {
+    try {
+      const response = await userService.verifyOTP(data.gmail, data.otp);
+      console.log("Otp verify response : ", response);
+      setEmailVerified(true);
+      const resp2 = await userService.getCollegeCourse(collegeId);
+      setStep(2);
+      setCourses(resp2.data)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleCourseChange = async(value) => {
+    try {
+      const response = await userService.getCollegeBranchUnderCourse(value);
+      setBranches(response.data);
+      console.log("Branches fetched : ", response)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const onSubmit2 = async(data) => {
+    try {
+      const response = await userService.addStudent(data);
+      console.log("Student Added : ", response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <div className="min-h-screen flex items-center justify-center p-5">
       <div className="w-full max-w-2xl h-auto mt-10 md:mt-26 lg:mt-20">
@@ -153,30 +82,41 @@ const UserRegistration = () => {
               <h2 className="text-center text-2xl font-bold mb-6 text-[#d27511]">
                 Step 1: Basic Information
               </h2>
-              <form>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Name:</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
+              <form onSubmit={handleSubmit(onSubmit1)}>
+              
+              <Controller
+                name="name"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Name is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="Name: "
+                    placeholder="Enter your name"
+              
+                    {...register("name", {
+                      required: true,
+                    })}
                   />
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">College Email ID:</label>
-                  <input
-                    type="email"
-                    name="collegeEmail"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.collegeEmail}
-                    onChange={handleChange}
-                    required
+                )}
+              />
+              <Controller
+                name="gmail"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Email is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="Email: "
+                    placeholder="Enter your email"
+              
+                    {...register("gmail", {
+                      required: true,
+                    })}
                   />
-                </div>
-                <div className="mb-4">
+                )}
+              />
+                {/* <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">College Name:</label>
                   <input
                     type="text"
@@ -188,42 +128,44 @@ const UserRegistration = () => {
                   {collegeErrorMessage && (
                     <p className="text-red-500 text-sm mt-2">{collegeErrorMessage}</p>
                   )}
-                </div>
+                </div> */}
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
-                  onClick={handleEmailVerification}
                 >
                   Verify Email
                 </button>
               </form>
               {otpSent && (
+                <form onSubmit={handleSubmit(optVerify)}>
                 <div className="otp-verification text-center mt-6">
                   <h3 className="mb-4 text-lg font-semibold text-[#2d545e]">
                     Enter the OTP sent to your email:
                   </h3>
-                  <input
-                    type="text"
-                    name="otp"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm mb-2 focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.otp}
-                    onChange={handleChange}
-                    required
+                  <Controller
+                name="otp"
+                control={control}
+                defaultValue=""
+                rules={{ required: "OTP is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="OTP: "
+                    placeholder="Enter your otp"
+              
+                    {...register("otp", {
+                      required: true,
+                    })}
                   />
+                )}
+              />
                   <button
-                    type="button"
+                    type="submit"
                     className="py-3 px-6 bg-green-500 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition transform hover:scale-105"
-                    onClick={handleOtpVerification}
                   >
                     Verify OTP
                   </button>
-                  {otpVerifiedMessage && (
-                    <p className="text-green-600 text-sm mt-4">{otpVerifiedMessage}</p>
-                  )}
-                  {otpErrorMessage && (
-                    <p className="text-red-600 text-sm mt-4">{otpErrorMessage}</p>
-                  )}
-                </div>
+                  
+                </div></form>
               )}
             </div>
           )}
@@ -243,110 +185,154 @@ const UserRegistration = () => {
                 </svg>
                 <h2 className="text-2xl font-bold text-[#d27511]">Step 2: Graduation Details</h2>
               </div>
-              <form>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Graduation Start Date:</label>
-                  <input
-                    type="date"
-                    name="startDate"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                    required
+              <form onSubmit={handleSubmit(onSubmit2)}>
+              
+                <Controller
+                name="collegeId"
+                control={control}
+                defaultValue={collegeId}
+                rules={{ required: "collegeId is required" }}
+                render={({ field }) => (
+                  <Input
+                    readonly
+                    label="collegeId: "
+                    placeholder="Enter your collegeId"
+              
+                    {...register("collegeId", {
+                      required: true,
+                    })}
                   />
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Graduation End Date:</label>
-                  <input
-                    type="date"
-                    name="endDate"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Graduation Year:</label>
-                  <input
-                    type="number"
-                    name="graduationYear"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.graduationYear}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                )}
+              />
+                
 
                 {/* Additional fields for College ID, Course, and Branch */}
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">College ID:</label>
-                  <input
-                    type="text"
-                    name="collegeId"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.collegeId}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">Course:</label>
-                  <input
-                    type="text"
-                    name="course"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.course}
-                    onChange={handleChange}
-                    required
+                  
+                  {/* Controller for branchId */}
+                  <Controller
+                    name="courseId"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: "courseId is required" }}
+                    render={({ field }) => (
+                      <select
+                      
+                        {...field}
+                        id="courseId"
+                        className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+                        required
+                        onChange={(e) => {
+                          field.onChange(e.target.value); // Update form state
+                          handleCourseChange(e.target.value); // Call your custom method
+                        }}
+                      >
+                        <option value="">
+                          Select your course
+                        </option>
+                        {courses && courses.length > 0 ? (
+                          courses.map((course) => (
+                            <option key={course.id} value={course.id}>
+                              {course.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No courses available</option>
+                        )}
+                      </select>
+                    )}
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Branch:</label>
-                  <input
-                    type="text"
-                    name="branch"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.branch}
-                    onChange={handleChange}
+              <label className="block font-semibold text-gray-700 mb-2">Branch:</label>
+              
+              {/* Controller for branchId */}
+              <Controller
+                name="branchId"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Branch is required" }}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    id="branch"
+                    className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
                     required
+                  >
+                    <option value="" disabled>
+                      Select your branch
+                    </option>
+                    {branches && branches.length > 0 ? (
+                      branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No branches available</option>
+                    )}
+                  </select>
+                )}
+              />
+            </div>
+            <Controller
+                name="admissionYear"
+                control={control}
+                defaultValue=""
+                rules={{ required: "admissionYear is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="admissionYear: "
+                    placeholder="Enter your admissionYear"
+              
+                    {...register("admissionYear", {
+                      required: true,
+                    })}
                   />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Password:</label>
-                  <input
-                    type="password"
-                    name="password"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
+                )}
+              />
+            <Controller
+                name="passoutYear"
+                control={control}
+                defaultValue=""
+                rules={{ required: "passoutYear is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="passoutYear: "
+                    placeholder="Enter your passoutYear"
+              
+                    {...register("passoutYear", {
+                      required: true,
+                    })}
                   />
-                  {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
-                </div>
-                <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">Confirm Password:</label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
+                )}
+              />
+                <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                rules={{ required: "password is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="password: "
+                    placeholder="Enter your password"
+              
+                    {...register("password", {
+                      required: true,
+                    })}
                   />
-                  {createAccountErrorMessage && <p className="text-red-500 text-sm mt-2">{createAccountErrorMessage}</p>}
-                </div>
+                )}
+              />
+                
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
-                  onClick={handleSubmit}
+                  
                 >
                   Create Account
                 </button>
-                {accountCreatedMessage && (
-                  <p className="text-center text-green-600 text-sm mt-4">{accountCreatedMessage}</p>
-                )}
+                
               </form>
             </div>
           )}
