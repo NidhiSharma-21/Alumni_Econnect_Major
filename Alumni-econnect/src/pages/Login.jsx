@@ -1,45 +1,60 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userService } from '../services/userServices';
+import {  useForm } from 'react-hook-form';
+const roleMapping = {
+  admin: 'Admin',
+  student: 'Student',
+  faculty: 'Faculty',
+  developer: 'Developer',
+};
 
 const Login = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
-
-  // State for form values and validation
-  const [formValues, setFormValues] = useState({
-    role: '',  
-    email: '',
-    password: '',
-  });
+/
+const { register, handleSubmit } = useForm();
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const formattedValue = name === 'role' ? value.toLowerCase() : value; // Ensure the role is in lowercase
+    setFormValues({ ...formValues, [name]: formattedValue });
+
   };
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    const { role, email, password } = formValues;
+ 
+  const handleLogin = async (data) => {
+    try {
+      const mappedRole = roleMapping[data.role];
+      const response = await userService.loginUser(data.email, data.password, mappedRole);
+      // Log the response for debugging purposes
+      console.log('API Response:', response);
 
-    if (!role) newErrors.role = 'Please select your role.';
-    if (!email) newErrors.email = 'Please enter your email address.';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Looks like this email is invalid.';
-    if (!password) newErrors.password = 'Password is required.';
+      // Check if the login was successful
+      if (response) {
+        console.log("successfully log in:", response)
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+        setIsLoggedIn(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted:', formValues);
-      setIsLoggedIn(true);
+      } else {
+
+        console.error('Login failed:', response?.message || 'Unknown error');
+        setErrors({ apiError: response?.message || 'Login failed, please try again.' });
+      }
+    } catch (error) {
+      console.error('Error during login API call:', error);
+      setErrors({ apiError: 'Something went wrong, please try again later.' });
     }
+
+  }
+
+  const onSubmit = async (e) => {
+    await handleLogin(e);
   };
 
   const handleSignUpRedirect = () => {
@@ -74,8 +89,9 @@ const Login = ({ setIsLoggedIn }) => {
                 Reconnect with your fellow alumni, access important updates, and be an active part of your community.
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-6 gap-6">
-                
+              
+              <form onSubmit={handleSubmit(onSubmit)} className="mt-8 grid grid-cols-6 gap-6">
+
                 {/* Role Selection */}
                 <div className="col-span-6">
                   <label htmlFor="Role" className="block text-sm font-medium text-gray-700">
@@ -83,11 +99,8 @@ const Login = ({ setIsLoggedIn }) => {
                   </label>
                   <select
                     id="Role"
-                    name="role"
-                    value={formValues.role}
-                    onChange={handleChange}
+                    {...register("role", { required: "Role is required" })}
                     className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
-                    required
                   >
                     <option value="" disabled>Select your role</option>
                     <option value="student">Student</option>
@@ -95,7 +108,7 @@ const Login = ({ setIsLoggedIn }) => {
                     <option value="admin">Admin</option>
                     <option value="developer">Developer</option>
                   </select>
-                  {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role}</p>}
+                  {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role.message}</p>}
                 </div>
 
                 {/* Email Input */}
@@ -106,14 +119,17 @@ const Login = ({ setIsLoggedIn }) => {
                   <input
                     type="email"
                     id="Email"
-                    name="email"
-                    value={formValues.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3 focus:ring-opacity-50"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
                     placeholder="you@example.com"
-                    required
                   />
-                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
+                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
                 </div>
 
                 {/* Password Input */}
@@ -124,14 +140,11 @@ const Login = ({ setIsLoggedIn }) => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="Password"
-                    name="password"
-                    value={formValues.password}
-                    onChange={handleChange}
+                    {...register("password", { required: "Password is required" })}
                     className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
                     placeholder="********"
-                    required
                   />
-                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
+                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                   <button
                     type="button"
                     className="absolute inset-y-6 bottom-2 right-0 flex items-center px-2 text-[#d27511] "
@@ -145,12 +158,15 @@ const Login = ({ setIsLoggedIn }) => {
                 <div className="col-span-6">
                   <button
                     type="submit"
-                    className="w-full rounded-md bg-[#d27511]  py-3 text-white font-semibold hover:bg-[#cc8233]  transition duration-300"
+                    className="w-full rounded-md bg-[#d27511] py-3 text-white font-semibold hover:bg-[#cc8233] transition duration-300"
                   >
                     Log In
                   </button>
                 </div>
               </form>
+
+
+
 
               <div className="mt-4 text-sm text-gray-600">
                 <button

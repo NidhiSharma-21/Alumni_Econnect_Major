@@ -62,6 +62,14 @@ class UserService {
             console.error(error);
         }
     }
+    async loginUser(email,password,role){
+        try {
+            const {data}=await instance.post(`Authorization?gmail=${email}&password=${password}&role=${role}`)
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 const userService = new UserService();
