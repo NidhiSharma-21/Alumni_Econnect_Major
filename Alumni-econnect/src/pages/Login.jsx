@@ -11,7 +11,7 @@ const roleMapping = {
 
 const Login = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
-/
+
 const { register, handleSubmit } = useForm();
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
