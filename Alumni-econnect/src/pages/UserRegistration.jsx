@@ -316,6 +316,7 @@ const UserRegistration = () => {
                 render={({ field }) => (
                   <Input
                     label="password: "
+                    type="password"
                     placeholder="Enter your password"
               
                     {...register("password", {
