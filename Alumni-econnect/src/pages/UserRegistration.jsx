@@ -328,7 +328,7 @@ const UserRegistration = () => {
                   )}
                 />
 
-            <Controller
+<Controller
                 name="password"
                 control={control}
                 defaultValue=""
