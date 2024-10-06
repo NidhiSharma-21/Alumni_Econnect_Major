@@ -1,8 +1,9 @@
 // src/pages/BlogsPage.js
 
 import React, { useEffect, useState } from 'react';
-import { userService } from '../services/userServices';
+
 import BlogCard from '../components/BlogComponent/BlogCard';
+import { blogService } from '../services/blogService';
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -13,14 +14,14 @@ const BlogsPage = () => {
     const getBlogs = async () => {
       setLoading(true);
       try {
-        const response = await userService.getBlog();
+        const response = await blogService.getBlog();
         console.log('Fetched blogs:', response);
 
         // For each blog, fetch comments count
         const blogsWithComments = await Promise.all(
           response.map(async (blog) => {
             try {
-              const comments = await userService.getComments(blog.id);
+              const comments = await blogService.getComments(blog.id);
               return { ...blog,comment:comments, commentsCount: comments.length };
             } catch (error) {
               console.error(`Error fetching comments for blog ID ${blog.id}:`, error);
@@ -46,7 +47,7 @@ const BlogsPage = () => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
 
     try {
-      await userService.deleteBlog(blogId);
+      await blogService.deleteBlog(blogId);
       // Remove the deleted blog from the state
       setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
       alert('Blog deleted successfully.');

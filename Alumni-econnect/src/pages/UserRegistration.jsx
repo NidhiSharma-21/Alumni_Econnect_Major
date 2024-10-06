@@ -46,7 +46,7 @@ const UserRegistration = () => {
       setEmailVerified(true);
       const resp2 = await userService.getCollegeCourse(collegeId);
       setStep(2);
-      setCourses(resp2.data)
+      setCourses(resp2)
     } catch (error) {
       console.error(error);
     }
@@ -55,7 +55,7 @@ const UserRegistration = () => {
   const handleCourseChange = async (value) => {
     try {
       const response = await userService.getCollegeBranchUnderCourse(value);
-      setBranches(response.data);
+      setBranches(response);
       console.log("Branches fetched : ", response)
     } catch (error) {
       console.error(error);

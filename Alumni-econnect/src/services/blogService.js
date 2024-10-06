@@ -36,6 +36,32 @@ class BlogService {
             console.error(error);
         }
     }
+    //get all blogs from backend
+    async getBlog(){
+        try {
+            const {data}=await instance.get(`Blog`);
+            console.log("Data : ", data);
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+    async deleteBlog(id){
+        try {
+            const {data}=await instance.delete(`Blog/${id}`)
+            return;
+        } catch (error) {
+            
+        }
+    }
+    async getComments(BlogId){
+        try {
+            const {data}=await instance.get(`BlogComment/${BlogId}`)
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
 }
 
 const blogService = new BlogService();
