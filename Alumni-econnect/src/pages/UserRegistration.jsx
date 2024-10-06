@@ -279,6 +279,7 @@ const UserRegistration = () => {
                   />
                 </div>
                 <Controller
+
                   name="admissionYear"
                   control={control}
                   defaultValue=""
@@ -327,6 +328,24 @@ const UserRegistration = () => {
                   )}
                 />
 
+=======
+                name="password"
+                control={control}
+                defaultValue=""
+                rules={{ required: "password is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="password: "
+                    type="password"
+                    placeholder="Enter your password"
+              
+                    {...register("password", {
+                      required: true,
+                    })}
+                  />
+                )}
+              />
+                
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
