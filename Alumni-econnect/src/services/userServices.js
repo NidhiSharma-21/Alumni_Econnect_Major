@@ -38,7 +38,7 @@ class UserService {
 
     async getCollegeCourse(collegeId){
         try {
-            const {data} = await instance.get(`College/GetCourse${collegeId}`);
+            const {data} = await instance.get(`College/GetCollegeCourse/${collegeId}`);
             return data;
         } catch (error) {
             console.error(error);
