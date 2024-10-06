@@ -1,249 +1,217 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Input from '../components/Shared/Input/Input';
+import { userService } from '../services/userServices';
+import { instance } from '../services/axiosInstance';
 
 const FacultyRegistration = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    college: "",
-    course: "",
-    branch: "",
-    teachingSince: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [notification, setNotification] = useState(false);
-
-  const branches = [
-    "Computer Science",
-    "Electronics",
-    "Mechanical",
-    "Civil",
-    "Electrical",
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.college) newErrors.college = "College is required";
-    if (!formData.course) newErrors.course = "Course is required";
-    if (!formData.branch) newErrors.branch = "Branch is required";
-    if (!formData.teachingSince) newErrors.teachingSince = "Teaching Since is required";
-    if (!formData.password) newErrors.password = "Password is required";
-    if (formData.password && formData.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters long";
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
-    return newErrors;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length === 0) {
-      setNotification(true);
-      setTimeout(() => setNotification(false), 3000); // Hide after 3 seconds
-
-      console.log("Form submitted successfully", formData);
-
-      // Reset form data
-      setFormData({
-        name: "",
-        email: "",
-        college: "",
-        course: "",
-        branch: "",
-        teachingSince: "",
-        password: "",
-        confirmPassword: "",
-      });
-    } else {
-      setErrors(formErrors);
+  const { register, control, handleSubmit } = useForm();
+  const [branches, setBranches] = useState([]);
+  //const [colleges, setColleges] = useState([]);
+  const [courses, setCourses] = useState([]);
+  // api for college
+  // useeffect
+  const colleges = [
+    {
+      id: "5c390669-6085-456f-9b37-08dcd938babd",
+      name: "Gyan Ganga College of Technology"
+    }
+  ]
+  // Submit form: Register Faculty
+  const onSubmit = async (formData) => {
+    try {
+      const {data} = await instance.post("User/AddFaculty", formData);
+      console.log("Faculty Registered: ", data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
+  const handleCollegeChange = async(data) => {
+    try{
+      console.log("College Id : ", data);
+      const response = await userService.getCollegeCourse(data);
+      console.log("Courses : ", response);
+      setCourses(response);
+    }catch(errror) {
+      console.error(error);
+    }
+  }
+  const handleCourseChange = async(data) => {
+    try{
+      console.log("Course Id : ", data);
+      const response = await userService.getCollegeBranchUnderCourse(data);
+      console.log("Branches : ", response);
+      setBranches(response);
+    }catch(errror) {
+      console.error(error);
+    }
+  }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 from-[#e1f5fe] to-[#fce4ec] py-10">
-      {/* Notification */}
-      {notification && (
-        <div className="absolute top-5 right-5 bg-green-500 text-white p-3 rounded-lg shadow-md transition-all duration-300 transform translate-y-0 opacity-100 z-50">
-          Account created successfully!
-        </div>
-      )}
-
-      {/* Form Container */}
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg px-10 py-10">
-        {/* Headline and Introduction */}
-        <h1 className="text-4xl font-bold text-center mb-4 text-[#d27511] drop-shadow-lg">
-          Join Our Faculty Team!
-        </h1>
-        <p className="text-center text-gray-700 mb-6 text-lg">
-          Fill out the form below to register as a faculty member. Help us
-          create a better learning environment by contributing your expertise
-          and experience.
-        </p>
-
-        <h2 className="text-3xl font-bold text-center mb-6 text-[#2d545e]">
-          Faculty Registration
-        </h2>
-        <form onSubmit={handleSubmit}>
-          {/* Name Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Name:
-            </label>
-            <input
-              type="text"
+    <div className="min-h-screen flex items-center justify-center p-5">
+      <div className="w-full max-w-2xl h-auto mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 space-y-6">
+          <h1 className="text-center text-4xl font-extrabold mb-4 text-[#2d545e]">
+            Faculty Registration
+          </h1>
+          <h2 className="text-center text-2xl font-bold mb-6 text-[#d27511]">
+            Please Fill Your Details
+          </h2>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Name Field */}
+            <Controller
               name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Name is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Name: "
+                  placeholder="Enter your name"
+                  {...register("name", { required: true })}
+                />
+              )}
             />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name}</p>
-            )}
-          </div>
 
-          {/* Email Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Email:
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+            {/* Gmail Field */}
+            <Controller
+              name="gmail"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Gmail is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Gmail: "
+                  placeholder="Enter your Gmail"
+                  {...register("gmail", { required: true })}
+                />
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
 
-          {/* College Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              College:
-            </label>
-            <input
-              type="text"
-              name="college"
-              value={formData.college}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+            {/* College ID as Select */}
+            <Controller
+              name="collegeId"
+              control={control}
+              rules={{ required: "College ID is required" }}
+              render={({ field }) => (
+                <div>
+                  <label>College: </label>
+                  <select {...field} {...register("collegeId", { required: true })} className="w-full p-2 border rounded" onChange={(e) => {
+                          field.onChange(e.target.value); // Update form state
+                          handleCollegeChange(e.target.value); // Call your custom method
+                        }}>
+                  <option value="">
+                          Select your college
+                        </option>
+                        {colleges && colleges.length > 0 ? (
+                          colleges.map((college) => (
+                            <option key={college.id} value={college.id}>
+                              {college.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No colleges available</option>
+                        )}
+                  </select>
+                </div>
+              )}
             />
-            {errors.college && (
-              <p className="text-sm text-red-500">{errors.college}</p>
-            )}
-          </div>
 
-          {/* Course Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Course:
-            </label>
-            <input
-              type="text"
-              name="course"
-              value={formData.course}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+            {/* Course ID as Select */}
+            <Controller
+              name="courseId"
+              control={control}
+              rules={{ required: "Course ID is required" }}
+              render={({ field }) => (
+                <div>
+                  <label>Course: </label>
+                  <select {...field} {...register("courseId", { required: true })} className="w-full p-2 border rounded" onChange={(e) => {
+                          field.onChange(e.target.value); // Update form state
+                          handleCourseChange(e.target.value); // Call your custom method
+                        }}>
+                  <option value="">
+                          Select your course
+                        </option>
+                        {courses && courses.length > 0 ? (
+                          courses.map((course) => (
+                            <option key={course.id} value={course.id}>
+                              {course.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No courses available</option>
+                        )}
+                  </select>
+                </div>
+              )}
             />
-            {errors.course && (
-              <p className="text-sm text-red-500">{errors.course}</p>
-            )}
-          </div>
 
-          {/* Branch Dropdown */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Branch:
-            </label>
-            <select
-              name="branch"
-              value={formData.branch}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
-            >
-              <option value="">Select a branch</option>
-              {branches.map((branch, index) => (
-                <option key={index} value={branch}>
-                  {branch}
-                </option>
-              ))}
-            </select>
-            {errors.branch && (
-              <p className="text-sm text-red-500">{errors.branch}</p>
-            )}
-          </div>
+            {/* Branch ID as Select */}
+            <Controller
+              name="branchId"
+              control={control}
+              rules={{ required: "Branch ID is required" }}
+              render={({ field }) => (
+                <div>
+                  <label>Branch: </label>
+                  <select {...field} {...register("branchId", { required: true })} className="w-full p-2 border rounded">
+                  <option value="">
+                          Select your Branch
+                        </option>
+                        {branches && branches.length > 0 ? (
+                          branches.map((branch) => (
+                            <option key={branch.id} value={branch.id}>
+                              {branch.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No branches available</option>
+                        )}
+                  </select>
+                </div>
+              )}
+            />
 
-          {/* Teaching Since Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Teaching Since:
-            </label>
-            <input
-              type="number"
+            {/* Teaching Since Field */}
+            <Controller
               name="teachingSince"
-              value={formData.teachingSince}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Teaching Since is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Teaching Since: "
+                  type="number"
+                  placeholder="Enter your teaching experience (years)"
+                  {...register("teachingSince", { required: true })}
+                />
+              )}
             />
-            {errors.teachingSince && (
-              <p className="text-sm text-red-500">{errors.teachingSince}</p>
-            )}
-          </div>
 
-          {/* Password Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Password:
-            </label>
-            <input
-              type="password"
+            {/* Password Field */}
+            <Controller
               name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Password: "
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register("password", { required: true })}
+                />
+              )}
             />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
 
-          {/* Confirm Password Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-[#2d545e]">
-              Confirm Password:
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full mt-2 p-3 border border-[#2d545e] rounded focus:outline-none focus:ring-2 focus:ring-[#d27511] transition-shadow hover:shadow-lg"
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full p-3 bg-gradient-to-r from-[#d27511] to-[#f59e0b] text-white font-semibold rounded transition-colors hover:from-[#f59e0b] hover:to-[#d27511] shadow-md transform hover:scale-105"
-          >
-            Register
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
+            >
+              Register Faculty
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

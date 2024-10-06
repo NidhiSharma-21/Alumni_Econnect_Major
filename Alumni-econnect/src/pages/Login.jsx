@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { userService } from '../services/userServices';
 import {  useForm } from 'react-hook-form';
 const roleMapping = {
-  admin: 'Admin',
-  student: 'Student',
-  faculty: 'Faculty',
-  developer: 'Developer',
+  
+  student: 0,
+  faculty: 1,
+  admin: 2,
+  developer: 3,
+  
 };
 
 const Login = ({ setIsLoggedIn }) => {
