@@ -328,7 +328,7 @@ const UserRegistration = () => {
                   )}
                 />
 
-=======
+            <Controller
                 name="password"
                 control={control}
                 defaultValue=""
