@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { userService } from '../services/userServices';
 
 const CollegeRegistration = () => {
   const [formValues, setFormValues] = useState({
     colleges: [
       {
-        college_name: '',
-        college_domain: '',
-        college_code: '',
+        name: '',
+        domain: '',
+        code: '',
         establishment_year: '',
         admin_name: '',
       },
@@ -33,6 +34,8 @@ const CollegeRegistration = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [states,setStates]=useState([]);
+  const [city,setCities]=useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,8 +94,8 @@ const CollegeRegistration = () => {
     const { colleges, contacts, accreditation, state, city, address, affiliated_university } = formValues;
 
     colleges.forEach((college, index) => {
-      if (!college.college_name) newErrors[`college_name_${index}`] = 'College Name is required';
-      if (!college.college_code) newErrors[`college_code_${index}`] = 'College Code is required';
+      if (!college.name) newErrors[`college_name_${index}`] = 'College Name is required';
+      if (!college.code) newErrors[`college_code_${index}`] = 'College Code is required';
       if (!college.establishment_year || isNaN(college.establishment_year)) newErrors[`establishment_year_${index}`] = 'Establishment Year must be numeric';
       if (!college.admin_name) newErrors[`admin_name_${index}`] = 'Admin Name is required';
     });
@@ -108,12 +111,52 @@ const CollegeRegistration = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Form submitted:', formValues);
+      const requestBody = {
+        name: colleges.college_name,
+        domain: colleges.college_domain,
+        code: colleges.college_code,
+        stateId: formValues.state, // State ID
+        cityId: formValues.city, // City ID
+        address: formValues.address,
+        establishmentYear: parseInt(colleges.establishment_year), // Convert to number
+        collegeType: 0, // Static value for demonstration
+        contactNumber: formValues.contacts.map(contact => contact.number), // Array of contact numbers
+        contactEmails: formValues.contacts.map(contact => contact.email), // Array of contact emails
+        authorityName: formValues.contacts.map(contact => contact.authority), // Array of authorities
+        nirF_Ranking: formValues.nirf_ranking ? parseInt(formValues.nirf_ranking) : null, // Optional field
+        accreditation: formValues.accreditation,
+        adminId: "", // Assuming admin_name is the admin ID
+        affiliated_UniversityId: formValues.affiliated_university, // University ID
+        links: [
+          formValues.social_media_links.linkedin,
+          formValues.social_media_links.facebook,
+          formValues.social_media_links.instagram,
+          formValues.social_media_links.twitter
+        ].filter(link => link) // Only add links that are filled in
+      };
+      try {
+           const state=await userService.getstate();
+           setStates(state);
+          const response=await userService.addCollege(requestBody);
+          console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+  const handleStateAndCity=async(e)=>{
+    try {
+      const state=await userService.getState();
+      setStates(state.name);
+     const city=await userService.getcity(e);
+     setCities(city.name);
+ } catch (error) {
+   console.log(error);
+ }
+  }
 
   return (
     <section className="bg-gray-100 p-6 mt-12">
@@ -129,19 +172,19 @@ const CollegeRegistration = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor={`college_name_${index}`} className="block text-sm font-medium text-gray-700">College Name</label>
-                  <input type="text" id={`college_name_${index}`} name="college_name" value={college.college_name} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
+                  <input type="text" id={`college_name_${index}`} name="name" value={college.name} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
                   {errors[`college_name_${index}`] && <p className="text-red-600 text-sm">{errors[`college_name_${index}`]}</p>}
-                </div>
+                </div> 
                 <div>
                   <label htmlFor={`college_code_${index}`} className="block text-sm font-medium text-gray-700">College Code</label>
-                  <input type="text" id={`college_code_${index}`} name="college_code" value={college.college_code} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
+                  <input type="text" id={`college_code_${index}`} name="code" value={college.code} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
                   {errors[`college_code_${index}`] && <p className="text-red-600 text-sm">{errors[`college_code_${index}`]}</p>}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor={`college_domain_${index}`} className="block text-sm font-medium text-gray-700">College Domain</label>
-                  <input type="text" id={`college_domain_${index}`} name="college_domain" value={college.college_domain} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " />
+                  <input type="text" id={`college_domain_${index}`} name="domain" value={college.domain} onChange={(e) => handleCollegeChange(index, e)} className="mt-1 w-full border rounded-md shadow-sm p-3 " />
                 </div>
                 <div>
                   <label htmlFor={`establishment_year_${index}`} className="block text-sm font-medium text-gray-700">Establishment Year</label>
@@ -197,16 +240,66 @@ const CollegeRegistration = () => {
               <input type="text" id="accreditation" name="accreditation" value={formValues.accreditation} onChange={handleChange} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
               {errors.accreditation && <p className="text-red-600 text-sm">{errors.accreditation}</p>}
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="state" className="block text-sm font-medium text-gray-700">State</label>
               <input type="text" id="state" name="state" value={formValues.state} onChange={handleChange} className="mt-1 w-full border rounded-md shadow-sm p-3" required />
               {errors.state && <p className="text-red-600 text-sm">{errors.state}</p>}
-            </div>
-            <div>
+            </div> */}
+            <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">State:</label>
+                  <select
+                    id="state"
+                    name="stateId"
+                    className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+                    value={formValues.state}
+                    onChange={(e)=>handleStateAndCity(e)}
+                    required
+                  >
+                    <option value="" disabled selected>
+                      Select state
+                    </option>
+                    {states && states.length > 0 ? (
+                      states.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No states available</option>
+                    )}
+                  </select>
+                  
+                </div>
+            {/* <div>
               <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
               <input type="text" id="city" name="city" value={formValues.city} onChange={handleChange} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />
               {errors.city && <p className="text-red-600 text-sm">{errors.city}</p>}
-            </div>
+            </div> */}
+            <div className="mb-4">
+                  <label className="block font-semibold text-gray-700 mb-2">City:</label>
+                  <select
+                    id="city"
+                    name="cityId"
+                    className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+                    value={formValues.city}
+                    
+                    required
+                  >
+                    <option value="" disabled selected>
+                     Select City
+                    </option>
+                    {city && city.length > 0 ? (
+                      city.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No city available</option>
+                    )}
+                  </select>
+                  
+                </div>
             <div>
               <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
               <input type="text" id="address" name="address" value={formValues.address} onChange={handleChange} className="mt-1 w-full border rounded-md shadow-sm p-3 " required />

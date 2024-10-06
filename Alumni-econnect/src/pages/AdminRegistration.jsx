@@ -39,6 +39,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
         const { data } = await axios.post('https://localhost:7002/api/User/AddAdmin', formValues);
         console.log(data);
         console.log("Registration successful");
+        
       } catch (error) {
         console.log(error);
       }

@@ -38,8 +38,8 @@ class UserService {
 
     async getCollegeCourse(collegeId){
         try {
-            const {data} = await instance.get(`College/GetCourse${collegeId}`);
-            return data;
+            const {data} = await instance.get(`College/GetCourse/${collegeId}`);
+            return data.data;
         } catch (error) {
             console.error(error);
         }
@@ -48,7 +48,7 @@ class UserService {
     async getCollegeBranchUnderCourse(courseId){
         try {
             const {data} = await instance.get(`College/GetBranchesUnderCollegeCourse/${courseId}`);
-            return data;
+            return data.data;
         } catch (error) {
             console.error(error);
         }
@@ -70,6 +70,59 @@ class UserService {
             console.error(error);
         }
     }
+    async addCollege(formData){
+        try {
+            const {data}=await instance.post(`College`,formData);
+            return data;
+        } catch (error) {
+            
+        }
+    }
+    //get all blogs from backend
+    async getBlog(){
+        try {
+            const {data}=await instance.get(`Blog`);
+            console.log("Data : ", data);
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+    async deleteBlog(id){
+        try {
+            const {data}=await instance.delete(`Blog/${id}`)
+            return;
+        } catch (error) {
+            
+        }
+    }
+    async getComments(BlogId){
+        try {
+            const {data}=await instance.get(`BlogComment/${BlogId}`)
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+    async getState(){
+        try {
+            const {data}=await instance.post(`Region`);
+            console.log("Data : ", data);
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+    async getcity(data){
+        try {
+            const {data}=await instance.post(`Region`,data);
+            console.log("Data : ", data);
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+
 }
 
 const userService = new UserService();
