@@ -11,6 +11,7 @@ import UserRegistration from "./pages/UserRegistration";
 import FeatureSection from "./components/FeaturesCard/Feature";
 import AlumniFeatures from "./pages/Features";
 import FacultyRegistration from "./pages/FacultyRegistration";
+import BlogEditor from "./pages/BlogCreate";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -32,7 +33,7 @@ const App = () => {
         <Route path="/features" element={<AlumniFeatures/>} />
         <Route path="/collegefunctions" element={<CollegeRegistration/>} />
         <Route path="/about" element={<AboutUs/>}/>
-
+        <Route path="/blogCreate" element={<BlogEditor/>}/>
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
 
