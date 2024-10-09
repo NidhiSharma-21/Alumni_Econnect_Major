@@ -64,6 +64,7 @@ const UserRegistration = () => {
 
   const onSubmit2 = async (data) => {
     try {
+      console.log("Form2 Data : ", data);
       const response = await userService.addStudent(data);
       console.log("Student Added : ", response);
     } catch (error) {
@@ -311,24 +312,9 @@ const UserRegistration = () => {
                     />
                   )}
                 />
+                
+
                 <Controller
-                  name="password"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: "password is required" }}
-                  render={({ field }) => (
-                    <Input
-                      label="password: "
-                      placeholder="Enter your password"
-
-                      {...register("password", {
-                        required: true,
-                      })}
-                    />
-                  )}
-                />
-
-<Controller
                 name="password"
                 control={control}
                 defaultValue=""

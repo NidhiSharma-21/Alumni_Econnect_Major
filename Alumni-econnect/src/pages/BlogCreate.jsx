@@ -6,11 +6,23 @@ import { blogService } from '../services/blogService';
 
 const BlogEditor = () => {
     const [content, setContent] = useState('');
-    const [tags, setTags] = useState([]);
-    const [customTags, setCustomTags] = useState([]);
+    const [tags, setTags] = useState([]); // Predefined tags
+    const [customTags, setCustomTags] = useState([]); // Custom tags
     const [imageUrls, setImageUrls] = useState([]);
 
-    
+    // Fetch tags on component mount
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const allTags = await blogService.getalltags();
+                setTags(allTags || []);
+            } catch (error) {
+                console.error("Error fetching tags:", error);
+            }
+        };
+
+        fetchTags();
+    }, []);
 
     const handleImageUrls = (urls) => {
         setImageUrls(urls);
@@ -35,14 +47,6 @@ const BlogEditor = () => {
         } catch (err) {
             console.error("Error posting blog:", err);
         }
-        const fetchTags = async () => {
-            try {
-                const allTags = await blogService.getalltags();
-                setTags(allTags || []);
-            } catch (error) {
-                console.error("Error fetching tags:", error);
-            }
-        };
     };
 
     const addCustomTag = (tag) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import NavDash from "./components/Navbar/NavDash"; // Import Navbar
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -15,6 +15,9 @@ import FacultyRegistration from "./pages/FacultyRegistration";
 import Event from "./pages/DashBoard/Event";
 import BlogsPage from "./pages/BlogsPage";
 import BlogEditor from "./pages/BlogCreate";
+// import DashNavbar from "./pages/DashBoard/DashboardNav";
+import DashboardPage from "./pages/DashBoard/DashboardPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -36,10 +39,27 @@ const App = () => {
         <Route path="/features" element={<AlumniFeatures/>} />
         <Route path="/collegefunctions" element={<CollegeRegistration/>} />
         <Route path="/about" element={<AboutUs/>}/>
-        <Route path="/blogCreate" element={<BlogEditor/>}/>
+        
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
-        <Route path="/event" element={<Event/>} />
+        {/* <Route path="/event" element={<Event/>} /> */}
+        <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      >
+        {/* Nested Routes */}
+        <Route index element={<Navigate to="blog" replace />} /> {/* Default when /dashboard is accessed */}
+        <Route path="blog" element={<BlogsPage />} >
+        <Route path="create" element={<BlogEditor />} />
+
+        </Route>
+        <Route path="events" element={<Event />} />
+        {/* <Route path="jobpost" element={<Jobpost />} /> */}
+      </Route>
 
         {/* Faculty Registration route */}
         <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
@@ -47,7 +67,7 @@ const App = () => {
         {/* 404 Page route */}
         <Route path="/*" element={<PageNotFound />} />
         {/*Bloge route*/ }
-        <Route path="/blog" element={<BlogsPage />} />
+        
         
 
       </Routes>

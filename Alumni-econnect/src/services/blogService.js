@@ -13,7 +13,7 @@ class BlogService {
     async getalltags() {
         try {
             const { data } = await instance.get(`Tag/GetAllTags`);
-            return data; // Return the fetched tags
+            return data.data; // Return the fetched tags
         } catch (error) {
             console.error(error);
         }
@@ -22,7 +22,7 @@ class BlogService {
     async getalltagsStartsWith(startsWith) {
         try {
             const { data } = await instance.get(`Tag/GetAllTags/${startsWith}`);
-            return data; // Return the fetched tags
+            return data.data; // Return the fetched tags
         } catch (error) {
             console.error(error);
         }

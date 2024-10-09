@@ -1,14 +1,17 @@
-// src/pages/BlogsPage.js
+// src/pages/BlogsPage.jsx
 
 import React, { useEffect, useState } from 'react';
-
+import { Outlet, useLocation } from 'react-router-dom'; // Import useLocation
 import BlogCard from '../components/BlogComponent/BlogCard';
 import { blogService } from '../services/blogService';
+import { NavLink } from 'react-router-dom'; // For sub-navigation links
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(false); // Optional: For loading state
-  const [error, setError] = useState(null); // Optional: For error handling
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  const location = useLocation(); // Get current location
 
   useEffect(() => {
     const getBlogs = async () => {
@@ -17,12 +20,12 @@ const BlogsPage = () => {
         const response = await blogService.getBlog();
         console.log('Fetched blogs:', response);
 
-        // For each blog, fetch comments count
+        // Fetch comments count for each blog
         const blogsWithComments = await Promise.all(
           response.map(async (blog) => {
             try {
               const comments = await blogService.getComments(blog.id);
-              return { ...blog,comment:comments, commentsCount: comments.length };
+              return { ...blog, comments, commentsCount: comments.length };
             } catch (error) {
               console.error(`Error fetching comments for blog ID ${blog.id}:`, error);
               return { ...blog, commentsCount: 0 }; // Default to 0 if error occurs
@@ -57,29 +60,42 @@ const BlogsPage = () => {
     }
   };
 
+  // Determine if the current route is '/dashboard/blog/create'
+  const isCreatePage = location.pathname === '/dashboard/blog/create';
+
   return (
     <section className="py-12 mt-6 flex flex-col">
-      {loading ? (
-        <p className="mt-12 text-center text-gray-500">Loading...</p>
-      ) : error ? (
-        <p className="mt-12 text-center text-red-500">{error}</p>
-      ) : blogs.length > 0 ? (
-        blogs.map((blog) => (
-          <BlogCard
-            key={blog.id}
-            id={blog.id}
-            img={blog.imageUrls}
-            description={blog.description}
-            tags={blog.tags}
-            user={blog.user}
-            onDelete={handleDelete}
-            commentsCount={blog.commentsCount} // Pass comments count as a prop
-            comments={blog.comment}
-            createdOn={blog.createdOn}
-          />
-        ))
+      
+      
+
+      {/* Render either the CreateBlog component or the Blogs list */}
+      {isCreatePage ? (
+        <Outlet /> 
       ) : (
-        <p className="mt-12 text-center text-gray-500">No blogs available</p> // Show this if there are no blogs
+        <>
+          {loading ? (
+            <p className="mt-12 text-center text-gray-500">Loading...</p>
+          ) : error ? (
+            <p className="mt-12 text-center text-red-500">{error}</p>
+          ) : blogs.length > 0 ? (
+            blogs.map((blog) => (
+              <BlogCard
+                key={blog.id}
+                id={blog.id}
+                img={blog.imageUrls}
+                description={blog.description}
+                tags={blog.tags}
+                user={blog.user}
+                onDelete={handleDelete}
+                commentsCount={blog.commentsCount} // Pass comments count as a prop
+                comments={blog.comments}
+                createdOn={blog.createdOn}
+              />
+            ))
+          ) : (
+            <p className="mt-12 text-center text-gray-500">No blogs available</p> 
+          )}
+        </>
       )}
     </section>
   );

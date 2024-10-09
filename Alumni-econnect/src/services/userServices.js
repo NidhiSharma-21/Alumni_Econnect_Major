@@ -62,10 +62,26 @@ class UserService {
             console.error(error);
         }
     }
+    async addAdmin(registerData){
+        try {
+            const {data} = await instance.post(`User/AddAdmin`, registerData);
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     async loginUser(email,password,role){
         try {
-            const {data}=await instance.post(`Authorization?gmail=${email}&password=${password}&role=${role}`)
-            return data;
+            const {data}=await instance.post(`Authorization`,{
+                email: email,
+                password: password,
+                role: role,
+              },{
+                headers: {
+                  'Content-Type': 'application/json', // Ensure this matches server expectations
+                },
+              })
+            return data.data;
         } catch (error) {
             console.error(error);
         }

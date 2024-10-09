@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { userService } from '../services/userServices';
+import { useNavigate } from 'react-router-dom';
+
 
 const CreateAccount = ({ setIsLoggedIn }) => {
   const [formValues, setFormValues] = useState({
@@ -10,6 +13,7 @@ const CreateAccount = ({ setIsLoggedIn }) => {
     password_confirmation: '',
   });
   const [errors, setErrors] = useState({});
+  const navigate =useNavigate();
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -36,9 +40,10 @@ const CreateAccount = ({ setIsLoggedIn }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const { data } = await axios.post('https://localhost:7002/api/User/AddAdmin', formValues);
+        const { data } = await userService.addAdmin( formValues);
         console.log(data);
         console.log("Registration successful");
+        navigate('/dashboard');
         
       } catch (error) {
         console.log(error);
