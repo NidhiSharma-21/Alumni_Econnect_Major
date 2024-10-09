@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaCalendarPlus } from 'react-icons/fa';
+import { eventService } from '../../services/eventService';
 
 const EventStatus = {
   Created: 0,
@@ -51,12 +52,19 @@ const EventForm = ({ onEventCreate }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length) {
-      setErrors(validationErrors);
-      return;
+      try {
+        const response=await eventService.addevents(e);
+        console.log(response);
+        setFormData('')
+      } catch (error) {
+        console.error(error);
+      }
+      // setErrors(validationErrors);
+      // return;
     }
 
     // Set the status to Created before submission
@@ -65,7 +73,7 @@ const EventForm = ({ onEventCreate }) => {
       status: EventStatus.Created, // Set status to Created
     };
 
-    onEventCreate(eventData); // Pass the event data
+    // onEventCreate(eventData); // Pass the event data
 
     // Reset form after successful submission
     setFormData({

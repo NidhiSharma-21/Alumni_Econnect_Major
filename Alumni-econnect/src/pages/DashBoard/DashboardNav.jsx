@@ -1,7 +1,7 @@
 // src/components/Navbar/DashNavbar.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Bars3Icon, XMarkIcon, BookOpenIcon, CalendarIcon, BriefcaseIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, BookOpenIcon, CalendarIcon, BriefcaseIcon, UserCircleIcon ,ChevronDownIcon} from '@heroicons/react/24/outline';
 import Dropdown from '../../components/Navbar/DropDown';
 import SideDrawer from '../../components/Navbar/SideDrawer';
 
@@ -10,6 +10,7 @@ const DashNavbar = () => {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEventDropdownOpen, setIsEventDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef(null); // Ref for detecting outside clicks
@@ -17,6 +18,11 @@ const DashNavbar = () => {
   const dropdownItems = [
     { label: 'Create Blog', link: '/dashboard/blog/create' },
     { label: 'View Blogs', link: '/dashboard/blog' },
+  ];
+  const eventDropdownItems = [
+    { label: 'Create Event', link: '/dashboard/eventshow/eventCreate' },
+    { label: 'Upcoming Events', link: '/dashboard/eventshow/upcoming' },
+    { label: 'View Events', link: '/dashboard/event' },
   ];
 
   // Close dropdown when clicking outside
@@ -56,22 +62,34 @@ const DashNavbar = () => {
           {/* Center: Nav Items */}
           <div className="hidden md:flex md:space-x-8">
             {/* Blog with Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative flex" ref={dropdownRef}>
+            <NavLink
+              to="/dashboard/blog"
+              className={({ isActive }) =>
+                `flex items-center  px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
+                }`
+              }
+            >
+              <BookOpenIcon className="h-5 w-5 mr-1" />
+              Blog
+            </NavLink>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
+                className="flex items-center px-1 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
                 aria-haspopup="true"
                 aria-expanded={isDropdownOpen}
               >
-                <BookOpenIcon className="h-5 w-5 mr-1" />
-                Blog
+                
+                <ChevronDownIcon className="h-5 w-5 ml-1" />
               </button>
               <Dropdown isOpen={isDropdownOpen} items={dropdownItems} />
             </div>
 
             {/* Events */}
+            <div className="relative flex" ref={dropdownRef}>
             <NavLink
-              to="/dashboard/events"
+              to="/dashboard/eventshow"
               className={({ isActive }) =>
                 `flex items-center px-3 py-2 rounded-md text-sm font-medium ${
                   isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
@@ -81,6 +99,18 @@ const DashNavbar = () => {
               <CalendarIcon className="h-5 w-5 mr-1" />
               Events
             </NavLink>
+            <button
+                onClick={() => setIsEventDropdownOpen(!isEventDropdownOpen)}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
+                aria-haspopup="true"
+                aria-expanded={isEventDropdownOpen}
+              >
+                
+                <ChevronDownIcon className="h-5 w-5 ml-1" /> {/* Dropdown icon */}
+              </button>
+              <Dropdown isOpen={isEventDropdownOpen} items={eventDropdownItems} />
+            </div>
+            
 
             {/* Jobpost */}
             <NavLink

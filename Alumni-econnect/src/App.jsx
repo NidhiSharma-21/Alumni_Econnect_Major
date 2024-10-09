@@ -14,14 +14,11 @@ import FacultyRegistration from "./pages/FacultyRegistration";
 
 import BlogsPage from "./pages/BlogsPage";
 import BlogEditor from "./pages/BlogCreate";
-<<<<<<< HEAD
 // import DashNavbar from "./pages/DashBoard/DashboardNav";
 import DashboardPage from "./pages/DashBoard/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-=======
 import EventShow from "./pages/DashBoard/EventShow";
 import EventForm from "./pages/DashBoard/CreateEvent";
->>>>>>> c05e31f8088b007b0fa77f7ceff61a4e2b5ff311
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -46,7 +43,6 @@ const App = () => {
         
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
-<<<<<<< HEAD
         {/* <Route path="/event" element={<Event/>} /> */}
         <Route
         path="/dashboard"
@@ -62,14 +58,15 @@ const App = () => {
         <Route path="create" element={<BlogEditor />} />
 
         </Route>
-        <Route path="events" element={<Event />} />
+        <Route path="eventshow" element={<EventShow/>} />
+        <Route path="eventshow/eventCreate" element={<EventForm/>} />
+
+        
         {/* <Route path="jobpost" element={<Jobpost />} /> */}
       </Route>
 
-=======
-        <Route path="/eventCreate" element={<EventForm/>} />
-        <Route path="/eventShow" element={<EventShow/>} />
->>>>>>> c05e31f8088b007b0fa77f7ceff61a4e2b5ff311
+        
+        
         {/* Faculty Registration route */}
         <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
           
