@@ -1,5 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
+import svg from '../assets/login.svg'
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../services/userServices';
 import { useForm } from 'react-hook-form';
@@ -63,8 +64,9 @@ const Login = () => {
         <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
           <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
             <img
+            src={svg}
               alt="Alumni Network"
-              src="/assets/login.svg" // Ensure the path is correct
+               // Ensure the path is correct
               className="absolute inset-0 h-full w-full object-cover"
             />
           </aside>
