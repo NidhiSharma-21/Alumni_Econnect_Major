@@ -12,9 +12,10 @@ import FeatureSection from "./components/FeaturesCard/Feature";
 import AlumniFeatures from "./pages/Features";
 import FacultyRegistration from "./pages/FacultyRegistration";
 
-import Event from "./pages/DashBoard/Event";
 import BlogsPage from "./pages/BlogsPage";
 import BlogEditor from "./pages/BlogCreate";
+import EventShow from "./pages/DashBoard/EventShow";
+import EventForm from "./pages/DashBoard/CreateEvent";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -39,8 +40,8 @@ const App = () => {
         <Route path="/blogCreate" element={<BlogEditor/>}/>
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
-        <Route path="/event" element={<Event/>} />
-
+        <Route path="/eventCreate" element={<EventForm/>} />
+        <Route path="/eventShow" element={<EventShow/>} />
         {/* Faculty Registration route */}
         <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
           
