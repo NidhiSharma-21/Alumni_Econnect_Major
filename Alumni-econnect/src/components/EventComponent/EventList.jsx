@@ -50,7 +50,7 @@ const EventList = () => {
         <FaStar className="mr-2 text-[#d27511]" />
         Explore Exciting Events!
       </h2>
-      <p className="text-center text-gray-700 text-lg mb-4 flex items-center justify-center mb-4">
+      <p className="text-center text-gray-700 text-lg mb-4 flex items-center justify-center ">
         Join us for unforgettable experiences and connections.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
