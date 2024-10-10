@@ -19,6 +19,8 @@ import DashboardPage from "./pages/DashBoard/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EventShow from "./pages/DashBoard/EventShow";
 import EventForm from "./pages/DashBoard/CreateEvent";
+import JobPostForm from "./pages/JobPostForm";
+import JobPostShow from "./pages/JobPostCard";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -40,7 +42,8 @@ const App = () => {
         <Route path="/features" element={<AlumniFeatures/>} />
         <Route path="/collegefunctions" element={<CollegeRegistration/>} />
         <Route path="/about" element={<AboutUs/>}/>
-        
+        <Route path="/jobpost" element={<JobPostShow/>}/>
+        <Route path="/jobform" element={<JobPostForm/>}/>
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
         {/* <Route path="/event" element={<Event/>} /> */}
