@@ -1,7 +1,10 @@
+// src/components/BlogComponent/BlogCard.jsx
+
 import React, { useState } from 'react';
 import { HandThumbUpIcon, ChatBubbleLeftIcon, TrashIcon } from '@heroicons/react/24/outline';
 import './style.css';
 import Comment from './Comment';
+import { blogService } from '../../services/blogService';
 
 const BlogCard = ({
   id,
@@ -13,9 +16,12 @@ const BlogCard = ({
   commentsCount,
   comments,
   createdOn,
+  refreshComments, // Receive the refresh function
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [posting, setPosting] = useState(false); // Posting state
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -40,13 +46,31 @@ const BlogCard = ({
     onDelete(id);
   };
 
+  const handlePostComment = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (!commentText.trim()) return; // Do not submit empty comments
+
+    setPosting(true);
+    try {
+      await blogService.addComment(id, commentText);
+      setCommentText(''); // Clear the textarea
+      await refreshComments(id); // Refresh comments after posting
+    } catch (error) {
+      console.error(error);
+      alert('Failed to post comment. Please try again.');
+    } finally {
+      setPosting(false);
+    }
+  };
+
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6 w-full sm:w-4/5 md:w-3/5 mx-auto transition-all duration-200"> {/* Adjusted for small screens */}
+    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6 w-full sm:w-4/5 md:w-3/5 mx-auto transition-transform transform hover:scale-105 duration-200"> {/* Enhanced UI with scaling effect */}
+      
       {/* Author Section */}
       <div className="flex items-center mb-4">
         <img
           src={user.imageUrl}
-          alt=""
+          alt={user.name}
           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#d27511]"
         />
         <div className="ml-4">
@@ -60,7 +84,7 @@ const BlogCard = ({
       {img && (
         <img
           src={img}
-          alt=""
+          alt="Blog"
           className="w-full h-40 sm:h-48 object-cover rounded-lg mt-4 mb-4 shadow-md"
         />
       )}
@@ -121,28 +145,32 @@ const BlogCard = ({
 
       {/* Comments Section */}
       {showComments && (
-        <section className="bg-white py-2 sm:py-6">
+        <section className="bg-white py-2 sm:py-6 mt-4">
           <div className="max-w-2xl mx-auto px-2 sm:px-4">
             <div className="flex justify-between items-center mb-4 sm:mb-6">
               <h2 className="text-md sm:text-lg font-bold text-[#2d545e]">
                 Comments ({comments.length})
               </h2>
             </div>
-            <form className="mb-4">
+            <form className="mb-4" onSubmit={handlePostComment}>
               <div className="py-2 px-3 bg-gray-100 rounded-lg border border-gray-200">
                 <textarea
                   id="comment"
-                  rows="1"
-                  className="w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
+                  rows="3"
+                  className="w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none resize-none"
                   placeholder="Write a comment..."
                   required
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
                 ></textarea>
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center py-2 px-4 text-xs font-medium text-white bg-[#d27511] rounded-lg hover:bg-[#d27511]/80 focus:ring-4 focus:ring-[#d27511]/50"
+                className={`inline-flex items-center py-2 px-4 text-xs font-medium text-white bg-[#d27511] rounded-lg hover:bg-[#d27511]/80 focus:ring-4 focus:ring-[#d27511]/50 ${posting ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                disabled={posting}
               >
-                Post comment
+                {posting ? 'Posting...' : 'Post Comment'}
               </button>
             </form>
 

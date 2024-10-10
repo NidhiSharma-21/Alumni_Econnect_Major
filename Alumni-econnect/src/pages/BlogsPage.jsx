@@ -1,7 +1,7 @@
 // src/pages/BlogsPage.jsx
 
 import React, { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom'; // Import useLocation
+import { Outlet, useLocation } from 'react-router-dom';
 import BlogCard from '../components/BlogComponent/BlogCard';
 import { blogService } from '../services/blogService';
 import { NavLink } from 'react-router-dom'; // For sub-navigation links
@@ -28,7 +28,7 @@ const BlogsPage = () => {
               return { ...blog, comments, commentsCount: comments.length };
             } catch (error) {
               console.error(`Error fetching comments for blog ID ${blog.id}:`, error);
-              return { ...blog, commentsCount: 0 }; // Default to 0 if error occurs
+              return { ...blog, commentsCount: 0, comments: [] }; // Default to 0 and empty comments if error occurs
             }
           })
         );
@@ -44,6 +44,23 @@ const BlogsPage = () => {
 
     getBlogs();
   }, []);
+
+  // Function to refresh comments for a specific blog
+  const refreshComments = async (blogId) => {
+    try {
+      const comments = await blogService.getComments(blogId);
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((blog) =>
+          blog.id === blogId
+            ? { ...blog, comments, commentsCount: comments.length }
+            : blog
+        )
+      );
+    } catch (error) {
+      console.error(`Error refreshing comments for blog ID ${blogId}:`, error);
+      // Optionally, set an error state or notify the user
+    }
+  };
 
   // Handler to delete a blog
   const handleDelete = async (blogId) => {
@@ -65,12 +82,9 @@ const BlogsPage = () => {
 
   return (
     <section className="py-12 mt-6 flex flex-col">
-      
-      
-
       {/* Render either the CreateBlog component or the Blogs list */}
       {isCreatePage ? (
-        <Outlet /> 
+        <Outlet />
       ) : (
         <>
           {loading ? (
@@ -90,10 +104,11 @@ const BlogsPage = () => {
                 commentsCount={blog.commentsCount} // Pass comments count as a prop
                 comments={blog.comments}
                 createdOn={blog.createdOn}
+                refreshComments={refreshComments} // Pass the refresh function
               />
             ))
           ) : (
-            <p className="mt-12 text-center text-gray-500">No blogs available</p> 
+            <p className="mt-12 text-center text-gray-500">No blogs available</p>
           )}
         </>
       )}

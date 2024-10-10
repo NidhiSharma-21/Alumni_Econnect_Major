@@ -62,6 +62,14 @@ class BlogService {
             
         }
     }
+    async addComment(BlogId,comment){
+        try {
+            const {data}=await instance.post(`BlogComment/blogId/${BlogId}`,comment);
+            return data;
+        } catch (error) {
+            
+        }
+    }
 }
 
 const blogService = new BlogService();
