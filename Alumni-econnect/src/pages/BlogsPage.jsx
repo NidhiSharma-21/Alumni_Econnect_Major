@@ -82,7 +82,7 @@ const BlogsPage = () => {
               <BlogCard
                 key={blog.id}
                 id={blog.id}
-                img={blog.imageUrls}
+                img={blog.mediaUrls}
                 description={blog.description}
                 tags={blog.tags}
                 user={blog.user}
