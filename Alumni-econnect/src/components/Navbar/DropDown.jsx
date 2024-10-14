@@ -1,38 +1,10 @@
-// // src/components/Navbar/Dropdown.jsx
-// import React from 'react';
-// import { NavLink } from 'react-router-dom';
-// import { PencilIcon, EyeIcon } from '@heroicons/react/24/outline';
+// src/components/Navbar/Dropdown.jsx
 
-// const Dropdown = ({ isOpen, items }) => {
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="absolute mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
-//       {items.map((item, index) => (
-//         <NavLink
-//           to={item.link}
-//           key={index}
-//           className={({ isActive }) =>
-//             `flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 ${
-//               isActive ? 'bg-gray-200' : ''
-//             }`
-//           }
-//         >
-//           {/* Conditionally render icons based on the label */}
-//           {item.label === 'Create Blog' && <PencilIcon className="h-4 w-4 mr-2" />}
-//           {item.label === 'View Blogs' && <EyeIcon className="h-4 w-4 mr-2" />}
-//           {item.label}
-//         </NavLink>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default Dropdown;
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { PencilIcon, EyeIcon, BriefcaseIcon, CalendarIcon } from '@heroicons/react/24/outline'; // Import necessary icons
 
-const Dropdown = ({ isOpen, items }) => {
+const Dropdown = ({ isOpen, items, onItemClick }) => {
   return (
     isOpen && (
       <div className="absolute z-10 mt-7 w-48 bg-white rounded-md shadow-lg">
@@ -41,13 +13,23 @@ const Dropdown = ({ isOpen, items }) => {
             <NavLink
               key={item.label}
               to={item.link}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className={({ isActive }) =>
+                `flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${
+                  isActive ? 'bg-gray-200' : ''
+                }`
+              }
               role="menuitem"
-              onClick={() => {
-                // Optionally close the dropdown when an item is clicked
-                setIsEventDropdownOpen(false); // This would be passed as a prop
-              }}
+              onClick={onItemClick} // Invoke the close dropdown handler
             >
+              {/* Conditionally render icons based on the label */}
+              {item.label === 'Create Blog' && <PencilIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'View Blogs' && <EyeIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'Create Event' && <PencilIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'View Events' && <EyeIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'Job post' && <BriefcaseIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'View Jobs' && <EyeIcon className="h-4 w-4 mr-2" />}
+              {item.label === 'Upcoming Events' && <CalendarIcon className="h-4 w-4 mr-2" />}
+              {/* Add more conditions as needed */}
               {item.label}
             </NavLink>
           ))}
@@ -58,4 +40,3 @@ const Dropdown = ({ isOpen, items }) => {
 };
 
 export default Dropdown;
-

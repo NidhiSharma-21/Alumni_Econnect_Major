@@ -52,6 +52,7 @@ const BlogCard = ({
 
     setPosting(true);
     try {
+      console.log(`${id}:`, commentText);
       await blogService.addComment(id, commentText);
       setCommentText(''); // Clear the textarea
       await refreshComments(id); // Refresh comments after posting
@@ -63,9 +64,25 @@ const BlogCard = ({
     }
   };
 
+  const handleCommentUpdated = (updatedComment) => {
+    setCommentText((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+  };
+
+  const handleCommentRemoved = (removedCommentId) => {
+    setCommentText((prevComments) =>
+      prevComments.filter((comment) => comment.id !== removedCommentId)
+    );
+  };
+
+
+
   return (
     <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6 w-full sm:w-4/5 md:w-3/5 mx-auto transition-transform transform hover:scale-105 duration-200"> {/* Enhanced UI with scaling effect */}
-      
+
       {/* Author Section */}
       <div className="flex items-center mb-4">
         <img
@@ -79,7 +96,7 @@ const BlogCard = ({
           <p className="text-xs text-gray-400">{formatDateTime(createdOn)}</p>
         </div>
       </div>
-      
+
       {/* Blog Image */}
       {img && (
         <img
@@ -98,7 +115,7 @@ const BlogCard = ({
           />
         ) : (
           <div
-            dangerouslySetInnerHTML={{ __html: `${description.substring(0, 100)}... `}}
+            dangerouslySetInnerHTML={{ __html: `${description.substring(0, 100)}... ` }}
             className="whitespace-normal"
           />
         )}
@@ -176,7 +193,12 @@ const BlogCard = ({
 
             {/* Comments List */}
             {comments.length > 0 ? (
-              comments.map((comment) => <Comment key={comment.id} comment={comment} />)
+              comments.map((comment) =>
+                <Comment
+                  key={comment.id}
+                  comment={comment}
+                  onCommentUpdated={handleCommentUpdated}
+                  onCommentRemoved={handleCommentRemoved} />)
             ) : (
               <p className="mt-4 sm:mt-6 text-center text-gray-500">
                 No comments available

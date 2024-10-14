@@ -12,7 +12,7 @@ const UserRegistration = () => {
   const [collegeId, setCollegeId] = useState('');
   const [courses, setCourses] = useState([])
   const [branches, setBranches] = useState([])
-
+  const [course, setCourse] = useState()
   const handleBackToStep1 = () => {
     setStep(1);
     setOtpSent(false);
@@ -54,6 +54,8 @@ const UserRegistration = () => {
 
   const handleCourseChange = async (value) => {
     try {
+      const newCourse = courses.find(course => course.id == value);
+      setCourse(newCourse);
       const response = await userService.getCollegeBranchUnderCourse(value);
       setBranches(response);
       console.log("Branches fetched : ", response)
@@ -65,6 +67,7 @@ const UserRegistration = () => {
   const onSubmit2 = async (data) => {
     try {
       console.log("Form2 Data : ", data);
+      data.courseId = course.courseId;
       const response = await userService.addStudent(data);
       console.log("Student Added : ", response);
     } catch (error) {

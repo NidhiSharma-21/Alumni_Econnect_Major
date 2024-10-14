@@ -4,6 +4,7 @@ class JobpostService {
     async getjobs() {
         try {
             const { data } = await instance.get(`Job`);
+            console.log("job data:",data);
             return data.data; // Return the fetched tags
         } catch (error) {
             console.error(error);
@@ -11,7 +12,12 @@ class JobpostService {
     }
     async postjobs(JobData) {
         try {
-            const { data } = await instance.post(`Job`,JobData);
+            const { data } = await instance.post(`Job`,JobData,{
+                headers: {
+                    'Content-Type': 'application/json',
+
+                    }
+            });
             return data.data; // Return the fetched tags
         } catch (error) {
             console.error(error);

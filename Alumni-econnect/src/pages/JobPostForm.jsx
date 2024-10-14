@@ -7,6 +7,7 @@ import {
   MdGroupAdd,
   MdOutlineTrendingUp,
 } from "react-icons/md";
+import { jobpostService } from "../services/jobpostService";
 
 const jobTypes = [
   { value: 0, label: "Full-time" },
@@ -27,12 +28,19 @@ const JobPostForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
     const today = new Date().toISOString().split("T")[0];
 
     if (data.deadline < today) {
       alert("Deadline cannot be in the past.");
       return;
+    }
+    try {
+      const response = await jobpostService.postjobs(data);
+      console.log(response);
+
+    } catch (error) {
+      console.error(error);
     }
 
     console.log("Job Data Submitted", data);

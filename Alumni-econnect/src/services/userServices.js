@@ -114,6 +114,31 @@ class UserService {
         }
     }
 
+    async getUserByToken(){
+        const token=localStorage.getItem('authToken');
+        if(token){
+            try{
+            const {data}=await instance.get(`User/GetLoginUserInfo`,{
+                headers : {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+            })
+            return data.data;
+        }catch(error){
+            console.error(error);
+        }
+        }
+    }
+    async getDetailsUserById(id){
+        try {
+            const {data}=await instance.get(`User/GetStudentDetails/${id}`)
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
+
 }
 
 const userService = new UserService();

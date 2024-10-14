@@ -9,45 +9,41 @@ const EventStatus = {
 
 const EventForm = ({ onEventCreate }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    Name: '',
     bannerUrl: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    location: '',
-    registration_Deadline: '',
-    status: EventStatus.Created, // Default status to "Created"
+    Description: '',
+    StartTime: '',
+    EndTime: '',
+    Location: '',
+    Registration_Deadline: '',
+    Status: EventStatus.Created,
   });
-  const [errors, setErrors] = useState({}); // Object to hold errors for each field
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Clear the specific error when user changes input
     setErrors({ ...errors, [name]: '' });
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, bannerUrl: reader.result });
-      };
-      reader.readAsDataURL(file);
+      setFormData({ ...formData, bannerUrl: file }); // Store the File object directly
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Event Name is required.";
-    if (!formData.startDate) newErrors.startDate = "Start Date is required.";
-    if (!formData.endDate) newErrors.endDate = "End Date is required.";
-    if (new Date(formData.startDate) > new Date(formData.endDate)) {
-      newErrors.endDate = "Start Date cannot be later than End Date.";
+    if (!formData.Name) newErrors.Name = "Event Name is required.";
+    if (!formData.StartTime) newErrors.StartTime = "Start Time is required.";
+    if (!formData.EndTime) newErrors.EndTime = "End Time is required.";
+    if (!formData.Description) newErrors.Description = "Description is required.";
+    if (new Date(formData.StartTime) > new Date(formData.EndTime)) {
+      newErrors.EndTime = "Start Time cannot be later than End Time.";
     }
-    if (formData.registration_Deadline && new Date(formData.registration_Deadline) > new Date(formData.startDate)) {
-      newErrors.registration_Deadline = "Registration Deadline cannot be after Start Date.";
+    if (formData.Registration_Deadline && new Date(formData.Registration_Deadline) > new Date(formData.StartTime)) {
+      newErrors.Registration_Deadline = "Registration Deadline cannot be after Start Time.";
     }
     return newErrors;
   };
@@ -56,37 +52,43 @@ const EventForm = ({ onEventCreate }) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length) {
-      try {
-        const response=await eventService.addevents(e);
-        console.log(response);
-        setFormData('')
-      } catch (error) {
-        console.error(error);
+      setErrors(validationErrors);
+      return;
+    }
+    console.log("form data:", formData);
+
+    try {
+      const response = await eventService.addevents(formData);
+      console.log(response);
+      alert("Event created successfully!");
+      // Reset form
+      // setFormData({
+      //   Name: '',
+      //   bannerUrl: '',
+      //   Description: '',
+      //   StartDate: '',
+      //   EndDate: '',
+      //   Location: '',
+      //   Registration_Deadline: '',
+      //   Status: EventStatus.Created,
+      // });
+      // Callback to parent component if needed
+      if (onEventCreate) onEventCreate(response);
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const serverErrors = error.response.data.errors;
+        const formattedErrors = Object.entries(serverErrors).reduce((acc, [field, messages]) => {
+          acc[field] = messages.join(' ');
+          return acc;
+        }, {});
+        setErrors(formattedErrors);
+      } else {
+        alert("Failed to create event. Please try again.");
       }
-      // setErrors(validationErrors);
-      // return;
     }
 
-    // Set the status to Created before submission
-    const eventData = {
-      ...formData,
-      status: EventStatus.Created, // Set status to Created
-    };
-
-    // onEventCreate(eventData); // Pass the event data
-
-    // Reset form after successful submission
-    setFormData({
-      name: '',
-      bannerUrl: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      location: '',
-      registration_Deadline: '',
-      status: EventStatus.Created, // Reset status to Created
-    });
-    setErrors({}); // Clear errors
+    setErrors({});
   };
 
   return (
@@ -101,19 +103,19 @@ const EventForm = ({ onEventCreate }) => {
         <div className="flex-grow">
           {/* Event Name */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Name">
               Event Name
             </label>
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="Name"
+              value={formData.Name}
               onChange={handleChange}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.name ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.Name ? 'border-red-500' : ''}`}
               placeholder="Enter Event Name"
               required
             />
-            {errors.name && <p className="text-red-500 text-xs italic">{errors.name}</p>}
+            {errors.Name && <p className="text-red-500 text-xs italic">{errors.Name}</p>}
           </div>
 
           {/* Upload Banner */}
@@ -127,94 +129,96 @@ const EventForm = ({ onEventCreate }) => {
               name="bannerUrl"
               onChange={handleFileChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
             />
             {formData.bannerUrl && (
               <img
-                src={formData.bannerUrl}
+                src={URL.createObjectURL(formData.bannerUrl)}
                 alt="Banner Preview"
-                className="mt-4 w-48 h-auto rounded" // Smaller width for preview
+                className="mt-4 w-48 h-auto rounded"
+                onLoad={() => URL.revokeObjectURL(formData.bannerUrl)} // Clean up memory
               />
             )}
           </div>
 
           {/* Description */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Description">
               Description
             </label>
             <textarea
-              name="description"
-              value={formData.description}
+              name="Description"
+              value={formData.Description}
               onChange={handleChange}
               rows="4"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.Description ? 'border-red-500' : ''}`}
               placeholder="Event Description"
               required
             />
+            {errors.Description && <p className="text-red-500 text-xs italic">{errors.Description}</p>}
           </div>
 
-          {/* Start Date */}
+          {/* Start Time */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="startDate">
-              Start Date
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="StartTime">
+              Start Time
             </label>
             <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
+              type="datetime-local" // Changed from "date" to "datetime-local"
+              name="StartTime" // Renamed from "StartDate"
+              value={formData.StartTime}
               onChange={handleChange}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.startDate ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.StartTime ? 'border-red-500' : ''}`}
               required
             />
-            {errors.startDate && <p className="text-red-500 text-xs italic">{errors.startDate}</p>}
+            {errors.StartTime && <p className="text-red-500 text-xs italic">{errors.StartTime}</p>}
           </div>
 
-          {/* End Date */}
+          {/* End Time */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="endDate">
-              End Date
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="EndTime">
+              End Time
             </label>
             <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
+              type="datetime-local" // Changed from "date" to "datetime-local"
+              name="EndTime" // Renamed from "EndDate"
+              value={formData.EndTime}
               onChange={handleChange}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.endDate ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.EndTime ? 'border-red-500' : ''}`}
               required
             />
-            {errors.endDate && <p className="text-red-500 text-xs italic">{errors.endDate}</p>}
+            {errors.EndTime && <p className="text-red-500 text-xs italic">{errors.EndTime}</p>}
           </div>
 
           {/* Location */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Location">
               Location
             </label>
             <input
               type="text"
-              name="location"
-              value={formData.location}
+              name="Location"
+              value={formData.Location}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.Location ? 'border-red-500' : ''}`}
               placeholder="Event Location"
               required
             />
+            {errors.Location && <p className="text-red-500 text-xs italic">{errors.Location}</p>}
           </div>
 
           {/* Registration Deadline */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="registration_Deadline">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Registration_Deadline">
               Registration Deadline
             </label>
             <input
               type="date"
-              name="registration_Deadline"
-              value={formData.registration_Deadline}
+              name="Registration_Deadline"
+              value={formData.Registration_Deadline}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.Registration_Deadline ? 'border-red-500' : ''}`}
             />
-            {errors.registration_Deadline && <p className="text-red-500 text-xs italic">{errors.registration_Deadline}</p>}
+            {errors.Registration_Deadline && <p className="text-red-500 text-xs italic">{errors.Registration_Deadline}</p>}
           </div>
         </div>
         <button

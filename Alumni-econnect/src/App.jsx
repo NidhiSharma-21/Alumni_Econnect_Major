@@ -42,8 +42,7 @@ const App = () => {
         <Route path="/features" element={<AlumniFeatures/>} />
         <Route path="/collegefunctions" element={<CollegeRegistration/>} />
         <Route path="/about" element={<AboutUs/>}/>
-        <Route path="/jobpost" element={<JobPostShow/>}/>
-        <Route path="/jobform" element={<JobPostForm/>}/>
+        
         {/* User Registration route */}
         <Route path="/userregistration" element={<UserRegistration/>}/>
         {/* <Route path="/event" element={<Event/>} /> */}
@@ -63,6 +62,9 @@ const App = () => {
         </Route>
         <Route path="eventshow" element={<EventShow/>} />
         <Route path="eventshow/eventCreate" element={<EventForm/>} />
+
+        <Route path="jobpost" element={<JobPostShow/>}/>
+        <Route path="jobpost/jobform" element={<JobPostForm/>}/>
 
         
         {/* <Route path="jobpost" element={<Jobpost />} /> */}

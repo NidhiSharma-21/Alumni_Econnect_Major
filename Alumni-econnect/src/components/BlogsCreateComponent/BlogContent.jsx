@@ -12,7 +12,7 @@ const BlogContent = ({ content, setContent }) => {
 
         // Ensure the editor is available
         if (editor) {
-            const content = editor.getContent({ format: 'html' });
+            const content = editor.getContent({ format: 'string' });
             const lastElement = content.split(/<a [^>]*>(.*?)<\/a>/g).pop().trim();
 
             if (event.key === ' ' && lastElement && lastElement.startsWith('http')) {

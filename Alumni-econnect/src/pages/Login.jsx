@@ -27,6 +27,10 @@ const Login = () => {
     try {
       const mappedRole = roleMapping[data.role];
       const response = await userService.loginUser(data.Email, data.Password, mappedRole);
+      const { token, role } = response; // Adjust according to your response structure
+
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userRole', role);
 
       // Log the response for debugging purposes
       console.log('API Response:', response);

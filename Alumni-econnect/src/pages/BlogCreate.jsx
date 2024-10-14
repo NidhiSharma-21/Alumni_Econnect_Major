@@ -24,20 +24,20 @@ const BlogEditor = () => {
         fetchTags();
     }, []);
 
-    const handleImageUrls = (urls) => {
-        setImageUrls(urls);
+    const handleimageUrls = (urls) => {
+        setImageUrls((prevUrls) => [...prevUrls, ...urls]); // Append new URLs to existing ones
     };
 
-    const getTagIds = (tags) => {
-        return tags.map((tag) => tag.id).filter((id) => id !== null);
+    const getTagIds = (tags2) => {
+        return tags2.map((tag) =>tag.id ).filter((id) => id !== null)
     };
-
+    
     const handleSubmit = async () => {
-        const tagIds = getTagIds(customTags);
+        const tagIds = getTagIds([...customTags]);
         const blogPost = {
-            description: content,
-            tags: tagIds,
-            imageUrls: imageUrls,
+            Description: content,
+            Tags: tagIds,
+            MediaFiles: imageUrls,
         };
 
         console.log("Blog Post Data:", blogPost);
@@ -50,13 +50,13 @@ const BlogEditor = () => {
     };
 
     const addCustomTag = (tag) => {
-        if (tag && !customTags.includes(tag)) {
+        if (tag && !customTags.some(t => t.id === tag.id)) {
             setCustomTags([...customTags, tag]);
         }
     };
-
-    const removeCustomTag = (tag) => {
-        setCustomTags(customTags.filter((t) => t !== tag));
+   
+    const removeCustomTag = (tagId) => {
+        setCustomTags(customTags.filter((t) => t.id !== tagId));
     };
 
     return (
@@ -65,7 +65,7 @@ const BlogEditor = () => {
                 Share Your Experiences and Updates
             </h2>
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6 overflow-y-auto">
-                <ImageUploader setContent={setContent} setImageUrls={handleImageUrls} />
+            <ImageUploader onImageUpload={handleimageUrls} />
                 <TagInput
                     predefinedTags={tags}
                     customTags={customTags}

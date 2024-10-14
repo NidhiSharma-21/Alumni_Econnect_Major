@@ -5,20 +5,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 
 // Sample userProfile data
-const userProfile = {
-  id: "46149ee7-1623-479c-b867-08dce38e0606",
-  name: "Ramnarayan Sanodiya",
-  gmail: "princeraghuwanshi_cse21@ggct.co.in",
-  college: "Gyan Ganga College of Technology",
-  course: "B.Tech (Bachelor of Technology)",
-  branch: "CSE (Computer Science and Engineering)",
-  country: "India",
-  admissionYear: 2021,
-  passoutYear: 2025,
-  profilePictureUrl: "https://cdn-icons-png.flaticon.com/512/6596/6596121.png",
-};
 
-const SideDrawer = ({ isOpen, onClose }) => {
+
+const SideDrawer = ({ isOpen, onClose,user,detailuser }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -57,34 +46,34 @@ const SideDrawer = ({ isOpen, onClose }) => {
         <div className="flex flex-col items-center">
           {/* Profile Image */}
           <img
-            src={userProfile.profilePictureUrl}
-            alt={`${userProfile.name}'s profile`}
+            src={user.imageUrl}
+            alt={`${user.name}'s profile`}
             className="h-24 w-24 rounded-full mb-4"
           />
           {/* User Information */}
-          <p className="text-gray-700 font-semibold">{userProfile.name}</p>
-          <p className="text-gray-500">{userProfile.gmail}</p>
+          <p className="text-gray-700 font-semibold">{user.name}</p>
+          <p className="text-gray-500">{detailuser.gmail}</p>
         </div>
 
         {/* Additional User Details */}
         <div className="mt-4">
           <p className="text-gray-700">
-            <strong>College:</strong> {userProfile.college}
+            <strong>College:</strong> {detailuser.college}
           </p>
           <p className="text-gray-700">
-            <strong>Course:</strong> {userProfile.course}
+            <strong>Course:</strong> {detailuser.course}
           </p>
           <p className="text-gray-700">
-            <strong>Branch:</strong> {userProfile.branch}
+            <strong>Branch:</strong> {detailuser.branch}
           </p>
           <p className="text-gray-700">
-            <strong>Country:</strong> {userProfile.country}
+            <strong>Country:</strong> {detailuser.country}
           </p>
           <p className="text-gray-700">
-            <strong>Admission Year:</strong> {userProfile.admissionYear}
+            <strong>Admission Year:</strong> {detailuser.admissionYear}
           </p>
           <p className="text-gray-700">
-            <strong>Passout Year:</strong> {userProfile.passoutYear}
+            <strong>Passout Year:</strong> {detailuser.passoutYear}
           </p>
         </div>
 
