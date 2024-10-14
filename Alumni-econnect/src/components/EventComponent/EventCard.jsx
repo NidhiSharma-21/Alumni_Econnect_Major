@@ -17,7 +17,7 @@ const EventCard = ({ event }) => {
   } = event;
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden transition-transform transform hover:scale-105 mb-4 border-2 border-[#d27511]">
+    <div className="bg-white shadow-xl rounded-xl overflow-hidden mb-4 ">
       {/* Display event image if available */}
       {Array.isArray(mediaUrls) && mediaUrls.length > 0 && (
         <img
@@ -52,14 +52,6 @@ const EventCard = ({ event }) => {
         <div className="flex items-center mb-2">
           <FaUser className="mr-2 text-[#d27511]" />
           <span className="text-gray-800">Approved By: {approvedByName}</span>
-        </div>
-        <div className="flex items-center mb-2">
-          <FaRegClock className="mr-2 text-[#d27511]" />
-          <span className="text-gray-800">Created On: {new Date(createdOn).toLocaleString()}</span>
-        </div>
-        <div className="flex items-center mb-2">
-          <FaCheckCircle className="mr-2 text-[#d27511]" />
-          <span className="text-gray-800">Status: {status === 1 ? 'Approved' : 'Pending'}</span>
         </div>
       </div>
     </div>
