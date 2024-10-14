@@ -81,7 +81,7 @@ const BlogCard = ({
 
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6 w-full sm:w-4/5 md:w-3/5 mx-auto transition-transform transform hover:scale-105 duration-200"> {/* Enhanced UI with scaling effect */}
+    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6 w-full sm:w-4/5 md:w-3/5 mx-auto"> {/* Enhanced UI with scaling effect */}
 
       {/* Author Section */}
       <div className="flex items-center mb-4">
@@ -102,7 +102,7 @@ const BlogCard = ({
         <img
           src={img}
           alt="Blog"
-          className="w-full h-40 sm:h-48 object-cover rounded-lg mt-4 mb-4 shadow-md"
+          className="w-full h-full object-cover rounded-lg mt-4 mb-4 shadow-md"
         />
       )}
 

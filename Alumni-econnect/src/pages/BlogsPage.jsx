@@ -3,9 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import BlogCard from '../components/BlogComponent/BlogCard';
-
 import { blogService } from '../services/blogService';
-import { NavLink } from 'react-router-dom';
 import BlogFilters from '../components/BlogComponent/BlogFilter';
 
 const BlogsPage = () => {
@@ -26,10 +24,7 @@ const BlogsPage = () => {
     const getBlogs = async () => {
       setLoading(true);
       try {
-        const response = await blogService.getBlog(); // Modify if using server-side filtering
-        console.log('Fetched blogs:', response);
-
-        // Fetch comments count for each blog
+        const response = await blogService.getBlog();
         const blogsWithComments = await Promise.all(
           response.map(async (blog) => {
             try {
@@ -55,36 +50,11 @@ const BlogsPage = () => {
     getBlogs();
   }, []);
 
-  // Function to refresh comments for a specific blog
-  const refreshComments = async (blogId) => {
-    try {
-      const comments = await blogService.getComments(blogId);
-      setBlogs((prevBlogs) =>
-        prevBlogs.map((blog) =>
-          blog.id === blogId
-            ? { ...blog, comments, commentsCount: comments.length }
-            : blog
-        )
-      );
-      setFilteredBlogs((prevBlogs) =>
-        prevBlogs.map((blog) =>
-          blog.id === blogId
-            ? { ...blog, comments, commentsCount: comments.length }
-            : blog
-        )
-      );
-    } catch (error) {
-      console.error(`Error refreshing comments for blog ID ${blogId}:`, error);
-    }
-  };
-
-  // Handler to delete a blog
   const handleDelete = async (blogId) => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
 
     try {
       await blogService.deleteBlog(blogId);
-      // Remove the deleted blog from the state
       setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
       setFilteredBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
       alert('Blog deleted successfully.');
@@ -94,22 +64,17 @@ const BlogsPage = () => {
     }
   };
 
-  // Determine if the current route is '/dashboard/blog/create'
   const isCreatePage = location.pathname === '/dashboard/blog/create';
 
-  // Fetch unique tags and authors for filter options
-  const tagsOptions = Array.from(
-    new Set(blogs.flatMap((blog) => blog.tags.map((tag) => tag.name)))
-  ).map((tag) => ({ value: tag, label: tag }));
+  const tagsOptions = Array.from(new Set(blogs.flatMap((blog) => blog.tags.map((tag) => tag.name))))
+    .map((tag) => ({ value: tag, label: tag }));
 
   const authorsOptions = Array.from(new Set(blogs.map((blog) => blog.user.name)))
     .map((author) => ({ value: author, label: author }));
 
-  // Apply filters
   useEffect(() => {
     let tempBlogs = [...blogs];
 
-    // Filter by tags
     if (selectedTags.length > 0) {
       const selectedTagNames = selectedTags.map((tag) => tag.value);
       tempBlogs = tempBlogs.filter((blog) =>
@@ -117,12 +82,10 @@ const BlogsPage = () => {
       );
     }
 
-    // Filter by author
     if (selectedAuthor) {
       tempBlogs = tempBlogs.filter((blog) => blog.user.name === selectedAuthor.value);
     }
 
-    // Filter by date range
     if (dateRange.start && dateRange.end) {
       tempBlogs = tempBlogs.filter((blog) => {
         const blogDate = new Date(blog.createdOn);
@@ -130,7 +93,6 @@ const BlogsPage = () => {
       });
     }
 
-    // Filter by search term
     if (searchTerm.trim() !== '') {
       const lowerSearchTerm = searchTerm.toLowerCase();
       tempBlogs = tempBlogs.filter(
@@ -144,13 +106,11 @@ const BlogsPage = () => {
   }, [blogs, selectedTags, selectedAuthor, dateRange, searchTerm]);
 
   return (
-    <section className="py-12 mt-6 flex flex-col">
-      {/* Render either the CreateBlog component or the Blogs list */}
+    <section className="py-12 flex flex-col">
       {isCreatePage ? (
         <Outlet />
       ) : (
         <>
-          {/* Filter Section */}
           <BlogFilters
             tagsOptions={tagsOptions}
             authorsOptions={authorsOptions}
@@ -165,9 +125,9 @@ const BlogsPage = () => {
           />
 
           {loading ? (
-            <p className="mt-12 text-center text-gray-500">Loading...</p>
+            <p className="mt-4 text-center text-gray-500 text-sm md:text-base">Loading...</p>
           ) : error ? (
-            <p className="mt-12 text-center text-red-500">{error}</p>
+            <p className="mt-4 text-center text-red-500 text-sm md:text-base">{error}</p>
           ) : filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
               <BlogCard
@@ -181,11 +141,10 @@ const BlogsPage = () => {
                 commentsCount={blog.commentsCount}
                 comments={blog.comments}
                 createdOn={blog.createdOn}
-                refreshComments={refreshComments}
               />
             ))
           ) : (
-            <p className="mt-12 text-center text-gray-500">No blogs match the selected filters</p>
+            <p className="mt-4 text-center text-gray-500 text-sm md:text-base">No blogs match the selected filters</p>
           )}
         </>
       )}

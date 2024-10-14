@@ -28,8 +28,8 @@ const TagInput = ({ predefinedTags, customTags, addCustomTag, removeCustomTag })
                     alert('Tag already exists.');
                 }
             } else {
-                console.error('Error: Invalid tag response from server.');
-                alert('Failed to add tag. Please try again.');
+                console.error('Tag Added Successfully.');
+                alert('Tag Added Successfully now you can add by search.');
             }
             setNewTag('');
         } catch (error) {
