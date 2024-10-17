@@ -102,7 +102,7 @@ const BlogCard = ({
         <img
           src={img}
           alt="Blog"
-          className="w-full h-full object-cover rounded-lg mt-4 mb-4 shadow-md"
+          className="w-full h-96 object-cover rounded-lg mt-4 mb-4 shadow-md"
         />
       )}
 
