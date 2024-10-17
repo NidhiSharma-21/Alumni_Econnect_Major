@@ -172,7 +172,7 @@ const DashNavbar = () => {
                 }
               >
                 <BriefcaseIcon className="h-5 w-5 mr-1" />
-                Jobpost
+                Jobs
               </NavLink>
               <button
                 onClick={() => setIsJobDropdownOpen(!isJobDropdownOpen)}
@@ -321,7 +321,7 @@ const DashNavbar = () => {
                 onClick={() => setIsMobileMenuOpen(false)} // Close mobile menu on navigation
               >
                 <BriefcaseIcon className="h-5 w-5 mr-1" />
-                Jobpost
+                Jobs
               </NavLink>
               <button
                 onClick={() => setIsJobDropdownOpen(!isJobDropdownOpen)}
