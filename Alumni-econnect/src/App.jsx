@@ -21,6 +21,7 @@ import EventShow from "./pages/DashBoard/EventShow";
 import EventForm from "./pages/DashBoard/CreateEvent";
 import JobPostForm from "./pages/JobPostForm";
 import JobPostShow from "./pages/JobPostCard";
+import ProfilePage from "./pages/DashBoard/ProfilePage";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -65,6 +66,7 @@ const App = () => {
 
         <Route path="jobpost" element={<JobPostShow/>}/>
         <Route path="jobpost/jobform" element={<JobPostForm/>}/>
+        <Route path="profile" element={<ProfilePage/>}/>
 
         
         {/* <Route path="jobpost" element={<Jobpost />} /> */}

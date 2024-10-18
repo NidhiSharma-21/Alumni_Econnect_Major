@@ -5,6 +5,7 @@ import { HandThumbUpIcon, ChatBubbleLeftIcon, TrashIcon } from '@heroicons/react
 import './style.css';
 import Comment from './Comment';
 import { blogService } from '../../services/blogService';
+import { NavLink } from 'react-router-dom';
 
 const BlogCard = ({
   id,
@@ -71,6 +72,7 @@ const BlogCard = ({
       )
     );
   };
+  const detailuser=user;
 
   const handleCommentRemoved = (removedCommentId) => {
     setCommentText((prevComments) =>
@@ -91,7 +93,12 @@ const BlogCard = ({
           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#d27511]"
         />
         <div className="ml-4">
+        <NavLink
+        to='/dashboard/profile'
+        state={{user}}
+        >
           <h4 className="font-semibold text-md sm:text-lg text-[#2d545e]">{user.name}</h4>
+          </NavLink>
           <p className="text-xs sm:text-sm text-gray-600">{user.headLine}</p>
           <p className="text-xs text-gray-400">{formatDateTime(createdOn)}</p>
         </div>

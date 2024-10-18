@@ -2,13 +2,15 @@
 
 import React from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 // Sample userProfile data
 
 
 const SideDrawer = ({ isOpen, onClose,user,detailuser }) => {
   const navigate = useNavigate();
+  
+ 
 
   const handleLogout = () => {
     // Clear the auth token from localStorage
@@ -22,7 +24,7 @@ const SideDrawer = ({ isOpen, onClose,user,detailuser }) => {
     // Redirect to the login page
     navigate('/');
   };
-
+console.log("user:",user)
   return (
     <div
       className={`fixed inset-0 z-50 mt-14 transition-transform transform ${
@@ -45,6 +47,11 @@ const SideDrawer = ({ isOpen, onClose,user,detailuser }) => {
         {/* Profile Content */}
         <div className="flex flex-col items-center">
           {/* Profile Image */}
+          <NavLink
+          to='/dashboard/profile'
+          state={{user}}
+          onClick={onClose}
+          >
           <img
             src={user.imageUrl}
             alt={`${user.name}'s profile`}
@@ -52,6 +59,7 @@ const SideDrawer = ({ isOpen, onClose,user,detailuser }) => {
           />
           {/* User Information */}
           <p className="text-gray-700 font-semibold">{user.name}</p>
+          </NavLink>
           <p className="text-gray-500">{detailuser.gmail}</p>
         </div>
 

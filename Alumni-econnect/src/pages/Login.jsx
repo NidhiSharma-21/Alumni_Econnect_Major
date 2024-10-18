@@ -31,6 +31,7 @@ const Login = () => {
 
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
+      localStorage.setItem('userId', response.user.id);
 
       // Log the response for debugging purposes
       console.log('API Response:', response);

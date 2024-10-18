@@ -86,6 +86,19 @@ class UserService {
             console.error(error);
         }
     }
+    async updateUser(formData){
+        const token=localStorage.getItem('authToken')
+        try {
+            const {data}=await instance.put(`User/UpdateUserDetails`,formData,{
+                headers:{
+                    'Authorization':`Bearer ${token}`
+                },
+            })
+            return data.data;
+        } catch (error) {
+            
+        }
+    }
     async addCollege(formData){
         try {
             const {data}=await instance.post(`College`,formData);
