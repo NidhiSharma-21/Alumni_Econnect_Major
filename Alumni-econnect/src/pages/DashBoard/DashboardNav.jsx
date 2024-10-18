@@ -1,5 +1,3 @@
-// src/components/Navbar/DashNavbar.jsx
-
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
@@ -10,6 +8,7 @@ import {
   BriefcaseIcon,
   UserCircleIcon,
   ChevronDownIcon,
+  MagnifyingGlassIcon, // Import the search icon
 } from '@heroicons/react/24/outline';
 import Dropdown from '../../components/Navbar/Dropdown';
 import SideDrawer from '../../components/Navbar/SideDrawer';
@@ -22,8 +21,9 @@ const DashNavbar = () => {
   const [isEventDropdownOpen, setIsEventDropdownOpen] = useState(false);
   const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user,setUser]=useState([]);
-  const [detailuser,setDetailUser]=useState([]);
+  const [user, setUser] = useState([]);
+  const [detailuser, setDetailUser] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const blogDropdownRef = useRef(null);
   const eventDropdownRef = useRef(null);
@@ -65,42 +65,44 @@ const DashNavbar = () => {
   }, []);
 
   const handleLogout = () => {
-    // Clear the auth token from localStorage
     localStorage.removeItem('authToken');
-
-    // Optionally, clear any other stored user data
-
-    // Redirect to the login page
     navigate('/');
   };
-  useEffect(()=>{
-      const getUserByToken=async()=>{
-        
-          try {
-            const response=await userService.getUserByToken();
-            console.log("login user:",response);
-            setUser(response);
-            const Userid=response.id;
-            const deresponse=await userService.getDetailsUserById(Userid);
-            console.log(deresponse);
-            setDetailUser(deresponse);
-          } catch (error) {
-            console.log(error);
-          }
-                
+
+  useEffect(() => {
+    const getUserByToken = async () => {
+      try {
+        const response = await userService.getUserByToken();
+        setUser(response);
+        const Userid = response.id;
+        const deresponse = await userService.getDetailsUserById(Userid);
+        setDetailUser(deresponse);
+      } catch (error) {
+        console.log(error);
       }
-      getUserByToken();
-  },[])
+    };
+    getUserByToken();
+  }, []);
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left Side: Brand */}
-          <div className="flex-shrink-0 flex items-center">
+          {/* Left Side: Brand and Search Bar */}
+          <div className="flex-shrink-0 flex items-center space-x-8">
             <NavLink to="/" className="text-xl font-bold text-[#2D545E]">
               Alumni-Econnect
             </NavLink>
+            <div className="relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search Alumni"
+                className="pl-10 pr-4 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#2D545E] focus:border-transparent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
 
           {/* Center: Nav Items */}
@@ -129,7 +131,7 @@ const DashNavbar = () => {
               <Dropdown
                 isOpen={isBlogDropdownOpen}
                 items={blogDropdownItems}
-                onItemClick={() => setIsBlogDropdownOpen(false)} // Close the dropdown when an item is clicked
+                onItemClick={() => setIsBlogDropdownOpen(false)}
               />
             </div>
 
@@ -157,7 +159,7 @@ const DashNavbar = () => {
               <Dropdown
                 isOpen={isEventDropdownOpen}
                 items={eventDropdownItems}
-                onItemClick={() => setIsEventDropdownOpen(false)} // Close the dropdown when an item is clicked
+                onItemClick={() => setIsEventDropdownOpen(false)}
               />
             </div>
 
@@ -172,7 +174,7 @@ const DashNavbar = () => {
                 }
               >
                 <BriefcaseIcon className="h-5 w-5 mr-1" />
-                Jobpost
+                Jobs
               </NavLink>
               <button
                 onClick={() => setIsJobDropdownOpen(!isJobDropdownOpen)}
@@ -185,7 +187,7 @@ const DashNavbar = () => {
               <Dropdown
                 isOpen={isJobDropdownOpen}
                 items={jobDropdownItems}
-                onItemClick={() => setIsJobDropdownOpen(false)} // Close the dropdown when an item is clicked
+                onItemClick={() => setIsJobDropdownOpen(false)}
               />
             </div>
           </div>
@@ -204,7 +206,6 @@ const DashNavbar = () => {
                 onClick={handleLogout}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
               >
-                {/* Logout Icon */}
                 <svg
                   className="h-5 w-5 mr-1"
                   xmlns="http://www.w3.org/2000/svg"
@@ -254,7 +255,7 @@ const DashNavbar = () => {
                     isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
-                onClick={() => setIsMobileMenuOpen(false)} // Close mobile menu on navigation
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 <BookOpenIcon className="h-5 w-5 mr-1" />
                 Blog
@@ -272,7 +273,7 @@ const DashNavbar = () => {
                 items={blogDropdownItems}
                 onItemClick={() => {
                   setIsBlogDropdownOpen(false);
-                  setIsMobileMenuOpen(false); // Optionally close mobile menu after selecting an item
+                  setIsMobileMenuOpen(false);
                 }}
               />
             </div>
@@ -286,7 +287,7 @@ const DashNavbar = () => {
                     isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
-                onClick={() => setIsMobileMenuOpen(false)} // Close mobile menu on navigation
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 <CalendarIcon className="h-5 w-5 mr-1" />
                 Events
@@ -304,7 +305,7 @@ const DashNavbar = () => {
                 items={eventDropdownItems}
                 onItemClick={() => {
                   setIsEventDropdownOpen(false);
-                  setIsMobileMenuOpen(false); // Optionally close mobile menu after selecting an item
+                  setIsMobileMenuOpen(false);
                 }}
               />
             </div>
@@ -318,10 +319,10 @@ const DashNavbar = () => {
                     isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
-                onClick={() => setIsMobileMenuOpen(false)} // Close mobile menu on navigation
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 <BriefcaseIcon className="h-5 w-5 mr-1" />
-                Jobpost
+                Jobs
               </NavLink>
               <button
                 onClick={() => setIsJobDropdownOpen(!isJobDropdownOpen)}
@@ -336,7 +337,7 @@ const DashNavbar = () => {
                 items={jobDropdownItems}
                 onItemClick={() => {
                   setIsJobDropdownOpen(false);
-                  setIsMobileMenuOpen(false); // Optionally close mobile menu after selecting an item
+                  setIsMobileMenuOpen(false);
                 }}
               />
             </div>
@@ -358,7 +359,6 @@ const DashNavbar = () => {
               onClick={handleLogout}
               className="flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
-              {/* Logout Icon */}
               <svg
                 className="h-5 w-5 mr-1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -377,11 +377,9 @@ const DashNavbar = () => {
             </button>
           </div>
         </div>
-        )}
-     
-      
-      
-      <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} user={user} detailuser={detailuser}/>
+      )}
+
+      <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} user={user} detailuser={detailuser} />
     </nav>
   );
 };
