@@ -12,7 +12,6 @@ const DashboardPage = () => {
 
       {/* Main Content */}
       <div className="pt-16 p-4">
-        {/* Nested Routes will be rendered here */}
         <Outlet />
       </div>
     </div>

@@ -7,19 +7,14 @@ const BlogContent = ({ content, setContent }) => {
     };
 
     const handleKeyUp = (event) => {
-        // Use the TinyMCE API to get the current content
         const editor = window.tinymce.activeEditor;
-
-        // Ensure the editor is available
         if (editor) {
-            const content = editor.getContent({ format: 'string' });
-            const lastElement = content.split(/<a [^>]*>(.*?)<\/a>/g).pop().trim();
-
+            const currentContent = editor.getContent({ format: 'string' });
+            const lastElement = currentContent.split(/<a [^>]*>(.*?)<\/a>/g).pop().trim();
             if (event.key === ' ' && lastElement && lastElement.startsWith('http')) {
-                // Insert a paragraph if the last element is a link followed by a space
-                const newContent = content + '<p></p>';
+                const newContent = currentContent + '<p></p>';
                 setContent(newContent);
-                editor.setContent(newContent); // Use the TinyMCE API to set content
+                editor.setContent(newContent);
             }
         }
     };
@@ -27,7 +22,7 @@ const BlogContent = ({ content, setContent }) => {
     return (
         <Editor
             apiKey="p99nugh3tyiff71l8ilanmw8ac45kj4ww4urafb83wjpe2ph"
-            initialValue=" "
+            initialValue="" // Start with an empty string
             init={{
                 height: 400,
                 menubar: false,
@@ -40,7 +35,7 @@ const BlogContent = ({ content, setContent }) => {
                 toolbar:
                     'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
                     'bullist numlist outdent indent | link image | code ',
-                link_default_target: "_blank", // Open links in a new tab
+                link_default_target: "_blank",
             }}
             onEditorChange={handleEditorChange}
             onKeyUp={handleKeyUp}
