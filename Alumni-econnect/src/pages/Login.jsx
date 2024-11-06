@@ -1,49 +1,62 @@
+// src/pages/Login.jsx
 import React, { useState } from 'react';
+import svg from '../assets/login.svg'
 import { useNavigate } from 'react-router-dom';
+import { userService } from '../services/userServices';
+import { useForm } from 'react-hook-form';
+ // Optional: Icons for show/hide password
 
-const Login = ({ setIsLoggedIn }) => {
+const roleMapping = {
+  student: 0,
+  faculty: 1,
+  admin: 2,
+  developer: 3,
+};
+
+const Login = () => {
   const navigate = useNavigate();
-
-  // State for form values and validation
-  const [formValues, setFormValues] = useState({
-    role: '',  
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState({});
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [apiError, setApiError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleChange = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
-  };
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    const { role, email, password } = formValues;
+  const handleLogin = async (data) => {
+    try {
+      const mappedRole = roleMapping[data.role];
+      const response = await userService.loginUser(data.Email, data.Password, mappedRole);
+      const { token, role } = response; // Adjust according to your response structure
 
-    if (!role) newErrors.role = 'Please select your role.';
-    if (!email) newErrors.email = 'Please enter your email address.';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Looks like this email is invalid.';
-    if (!password) newErrors.password = 'Password is required.';
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('userId', response.user.id);
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+      // Log the response for debugging purposes
+      console.log('API Response:', response);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted:', formValues);
-      setIsLoggedIn(true);
+      // Check if the login was successful
+      if (response && response.token) { // Assuming the API returns a token on success
+        console.log("Successfully logged in:", response);
+
+        // Store the auth token in localStorage (adjust based on your security needs)
+        localStorage.setItem('authToken', response.token);
+
+        // Navigate to the dashboard
+        navigate('/dashboard');
+      } else {
+        console.error('Login failed:', response?.message || 'Unknown error');
+        setApiError(response?.message || 'Login failed, please try again.');
+      }
+    } catch (error) {
+      console.error('Error during login API call:', error);
+      setApiError('Something went wrong, please try again later.');
     }
   };
 
   const handleSignUpRedirect = () => {
-    navigate('/signup');
+    navigate('/userregistration');
   };
 
   const handleForgotPassword = () => {
@@ -56,17 +69,15 @@ const Login = ({ setIsLoggedIn }) => {
         <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
           <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
             <img
+            src={svg}
               alt="Alumni Network"
-              src="src/assets/login.svg"
+               // Ensure the path is correct
               className="absolute inset-0 h-full w-full object-cover"
             />
           </aside>
 
           <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
             <div className="max-w-xl lg:max-w-3xl">
-              <a className="block text-[#d27511] " href="#">
-                <span className="sr-only">Home</span>
-              </a>
               <h6 className="mt-6 text-3xl font-bold text-[#2d545e] sm:text-4xl md:text-5xl">
                 Welcome Back!
               </h6>
@@ -74,27 +85,24 @@ const Login = ({ setIsLoggedIn }) => {
                 Reconnect with your fellow alumni, access important updates, and be an active part of your community.
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-6 gap-6">
-                
+              <form onSubmit={handleSubmit(handleLogin)} className="mt-8 grid grid-cols-6 gap-6">
                 {/* Role Selection */}
                 <div className="col-span-6">
-                  <label htmlFor="Role" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                     Select Your Role
                   </label>
                   <select
-                    id="Role"
-                    name="role"
-                    value={formValues.role}
-                    onChange={handleChange}
+                    id="role"
+                    {...register("role", { required: "Role is required" })}
                     className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
-                    required
                   >
                     <option value="" disabled>Select your role</option>
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
                     <option value="admin">Admin</option>
+                    <option value="developer">Developer</option>
                   </select>
-                  {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role}</p>}
+                  {errors.role && <p className="mt-2 text-sm text-red-600">{errors.role.message}</p>}
                 </div>
 
                 {/* Email Input */}
@@ -105,14 +113,17 @@ const Login = ({ setIsLoggedIn }) => {
                   <input
                     type="email"
                     id="Email"
-                    name="email"
-                    value={formValues.email}
-                    onChange={handleChange}
-                    className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3 focus:ring-opacity-50"
+                    {...register("Email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
                     placeholder="you@example.com"
-                    required
                   />
-                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
+                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
                 </div>
 
                 {/* Password Input */}
@@ -123,20 +134,21 @@ const Login = ({ setIsLoggedIn }) => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="Password"
-                    name="password"
-                    value={formValues.password}
-                    onChange={handleChange}
+                    {...register("Password", { required: "Password is required" })}
                     className="mt-1 w-full rounded-md border border-gray-300 bg-white text-sm text-gray-900 shadow-sm p-3"
                     placeholder="********"
-                    required
                   />
-                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
+                  {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                   <button
                     type="button"
-                    className="absolute inset-y-6 bottom-2 right-0 flex items-center px-2 text-[#d27511] "
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
                     onClick={handlePasswordToggle}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {/* {showPassword ? (
+                      <EyeOffIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )} */}
                   </button>
                 </div>
 
@@ -144,23 +156,32 @@ const Login = ({ setIsLoggedIn }) => {
                 <div className="col-span-6">
                   <button
                     type="submit"
-                    className="w-full rounded-md bg-[#d27511]  py-3 text-white font-semibold hover:bg-[#cc8233]  transition duration-300"
+                    className="w-full rounded-md bg-[#d27511] py-3 text-white font-semibold hover:bg-[#cc8233] transition duration-300"
                   >
                     Log In
                   </button>
                 </div>
               </form>
 
+              {/* API Error Message */}
+              {apiError && (
+                <div className="mt-4 text-sm text-red-600">
+                  {apiError}
+                </div>
+              )}
+
+              {/* Forgot Password */}
               <div className="mt-4 text-sm text-gray-600">
                 <button
                   type="button"
-                  className="text-[#d27511]  hover:text-[#c2823d] "
+                  className="text-[#d27511] hover:text-[#c2823d] "
                   onClick={handleForgotPassword}
                 >
                   Forgot Password?
                 </button>
               </div>
 
+              {/* Social Login */}
               <div className="mt-8 flex flex-col items-center">
                 <div className="flex items-center w-full">
                   <div className="flex-grow border-t border-gray-300"></div>
@@ -189,11 +210,12 @@ const Login = ({ setIsLoggedIn }) => {
                 </button>
               </div>
 
+              {/* Sign Up Redirect */}
               <div className="mt-8 flex justify-center text-sm text-gray-600">
                 <span>Don't have an account?</span>
                 <button
                   type="button"
-                  className="ml-2 text-[#d27511]  hover:text-[#cf8434] "
+                  className="ml-2 text-[#d27511] hover:text-[#cf8434]"
                   onClick={handleSignUpRedirect}
                 >
                   Sign Up

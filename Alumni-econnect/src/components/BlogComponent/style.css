@@ -1,0 +1,13 @@
+.blog-item a {
+    color: #1d4ed8; /* Blue for links */
+    text-decoration: underline; /* Add underline to links */
+  }
+  
+  .blog-item a:hover {
+    color: #d27511; /* Darker blue on hover */
+    text-decoration: none; /* Remove underline on hover */
+  }
+  .blog-item {
+    transition: max-height 0.3s ease-in-out;
+    overflow: hidden;
+  }
