@@ -8,9 +8,9 @@ const Posts = ({ posts }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post, index) => (
                         <div key={index} className="flex flex-col bg-gray-100 p-4 rounded-lg shadow-md">
-                            {post.mediaUrls && (
+                            {post.mediaUrls && post.mediaUrls.length > 0 && (
                                 <img
-                                    src={post.mediaUrls}
+                                    src={post.mediaUrls[0]} // Display the first image
                                     alt="Post Media"
                                     className="w-full h-64 object-cover rounded-lg mb-4"
                                 />

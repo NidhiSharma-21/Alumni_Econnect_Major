@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import BlogContent from '../components/BlogsCreateComponent/BlogContent';
 import ImageUploader from '../components/BlogsCreateComponent/ImageUploader';
@@ -37,15 +36,22 @@ const BlogEditor = () => {
         return tagsList.map((tag) => tag.id).filter((id) => id !== null);
     };
 
+    const sanitizeContent = (str) => {
+        return str.replace(/^\s+|\s+$/g, '').replace(/\u200B/g, ''); // Trim and remove zero-width spaces
+    };
+
     const handleSubmit = async () => {
-        if (!content || imageUrls.length === 0 || customTags.length === 0) {
+        const trimmedContent = sanitizeContent(content); // Use the sanitize function
+        console.log("Trimmed Content:", trimmedContent);
+
+        if (!trimmedContent || imageUrls.length === 0 || customTags.length === 0) {
             alert("Please fill in all fields and add at least one tag and image.");
             return;
         }
 
         const tagIds = getTagIds([...customTags]);
         const blogPost = {
-            Description: content,
+            Description: trimmedContent, // Use sanitized content
             Tags: tagIds,
             MediaFiles: imageUrls,
         };
@@ -54,6 +60,7 @@ const BlogEditor = () => {
             setLoading(true);
             const response = await blogService.addblog(blogPost);
             console.log("Blog Posted Successfully:", response);
+            // Reset state after successful submission
             setContent('');
             setCustomTags([]);
             setImageUrls([]);
