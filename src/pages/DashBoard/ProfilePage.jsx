@@ -7,17 +7,17 @@ import Posts from '../../components/ProfileComponent/Post';
 import { blogService } from '../../services/blogService';
 import { userService } from '../../services/userServices';
 import About from '../../components/ProfileComponent/About';
+import { FaEdit, FaUserGraduate, FaMapMarkerAlt, FaBriefcase, FaUsers } from 'react-icons/fa';
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);  // To control editing mode
+    const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
     const location = useLocation();
-    const { user: passedUser } = location.state || {};  // Get profile data
+    const { user: passedUser } = location.state || {};
     const loggedInUserId = localStorage.getItem('userId');
 
-    // Add dependency for the location to re-fetch data on re-navigation
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -34,7 +34,6 @@ const ProfilePage = () => {
         const fetchUserDetails = async () => {
             try {
                 const userDetails = await userService.getDetailsUserById(passedUser?.id);
-                console.log("Fetched User Details:", userDetails);  // Check if bio and address exist
                 setUser(userDetails);
             } catch (error) {
                 console.error("Error fetching user details:", error);
@@ -42,11 +41,11 @@ const ProfilePage = () => {
         };
 
         if (passedUser) {
-            setUser(passedUser);  // Set passed user if available
+            setUser(passedUser);
             fetchUserDetails();
             fetchPosts();
         }
-    }, [location.state]);  // Update useEffect to run when location state changes
+    }, [location.state]);
 
     const handleEditClick = () => {
         setIsEditing(true);
@@ -54,9 +53,9 @@ const ProfilePage = () => {
 
     const handleSave = async (updatedUser) => {
         try {
-            const response = await userService.updateUser(updatedUser);  // Make API call to save the updated user
+            const response = await userService.updateUser(updatedUser);
             setUser(response);
-            setIsEditing(false);  // Exit edit mode
+            setIsEditing(false);
         } catch (error) {
             console.error("Error updating user:", error);
         }
@@ -67,13 +66,13 @@ const ProfilePage = () => {
     const isOwnProfile = loggedInUserId && loggedInUserId === passedUser?.id;
     return (
         <section className="mt-10">
-            <div className="max-w-full mx-auto mt-6">
+            <div className="max-w-full mx-auto mt-6 p-4 bg-gray-100 rounded-lg shadow-lg">
                 {isOwnProfile && !isEditing && (
                     <button
                         onClick={handleEditClick}
-                        className="bg-[#d27511] text-white pr-2 py-2 rounded-md mb-6 mt-10"
+                        className="flex items-center bg-[#d27511] text-white pr-2 py-2 rounded-md mb-6 mt-10"
                     >
-                        Edit Profile
+                        <FaEdit className="mr-2" /> Edit Profile
                     </button>
                 )}
 
@@ -90,8 +89,10 @@ const ProfilePage = () => {
                         <UserDetails
                             college={user?.college}
                             location={user?.address}
-                            industry={user?.industry}
-                            connections={user?.connections}
+                            role={user?.role}
+                            id={user?.id}
+                            imageUrl={user?.profilePictureUrl}
+                            headline={passedUser?.headline}
                         />
                         <About bio={user?.bio} />
                         <Posts posts={posts} />
@@ -122,11 +123,11 @@ const EditProfileForm = ({ detailuser, onSave }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        onSave(formData);  // Save the updated data in parent component
+        onSave(formData);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
             <div>
                 <label>Name:</label>
                 <input
@@ -134,7 +135,7 @@ const EditProfileForm = ({ detailuser, onSave }) => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="border px-4 py-2 w-full"
+                    className="border px-4 py-2 w-full rounded-md"
                 />
             </div>
             <div>
@@ -143,7 +144,7 @@ const EditProfileForm = ({ detailuser, onSave }) => {
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
-                    className="border px-4 py-2 w-full"
+                    className="border px-4 py-2 w-full rounded-md"
                 />
             </div>
             <div>
@@ -153,7 +154,7 @@ const EditProfileForm = ({ detailuser, onSave }) => {
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="border px-4 py-2 w-full"
+                    className="border px-4 py-2 w-full rounded-md"
                 />
             </div>
             <div>
@@ -163,7 +164,7 @@ const EditProfileForm = ({ detailuser, onSave }) => {
                     name="industry"
                     value={formData.industry}
                     onChange={handleChange}
-                    className="border px-4 py-2 w-full"
+                    className="border px-4 py-2 w-full rounded-md"
                 />
             </div>
             <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-md">
