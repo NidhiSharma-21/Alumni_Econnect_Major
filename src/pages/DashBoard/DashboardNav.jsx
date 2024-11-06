@@ -10,7 +10,7 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon, // Import the search icon
 } from '@heroicons/react/24/outline';
-import Dropdown from '../../components/Navbar/Dropdown';
+import Dropdown from '../../components/Navbar/DropDown';
 import SideDrawer from '../../components/Navbar/SideDrawer';
 import { userService } from '../../services/userServices';
 
