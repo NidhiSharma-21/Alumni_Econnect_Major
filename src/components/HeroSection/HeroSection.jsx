@@ -1,12 +1,12 @@
 import React from 'react';
-
+import landingImage from '../../assets/alumniLandingPage.png'
 const HeroSection = () => {
   return (
     <section className="bg-white dark:bg-gray-900 lg:mt-16 mt-16 mb-6">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
       <div className=" lg:mt-0 lg:col-span-5 lg:flex">
           <img
-            src="src/assets/alumniLandingPage.png"
+            src={landingImage}
             alt="mockup"
           />
         </div>

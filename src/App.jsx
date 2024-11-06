@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import NavDash from "./components/Navbar/NavDash"; // Import Navbar
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import PageNotFound from "./pages/PageNotFound";
 import CreateAccount from "./pages/AdminRegistration";
 import CollegeRegistration from "./pages/CollegeFunctionalites";
 import AboutUs from "./pages/AboutUs";
@@ -78,7 +77,7 @@ const App = () => {
         <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
           
         {/* 404 Page route */}
-        <Route path="/*" element={<PageNotFound />} />
+        <Route path="/*" element={<Home/>} />
         {/*Bloge route*/ }
         
         

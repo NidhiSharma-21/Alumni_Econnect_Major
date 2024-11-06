@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import Contactus from '../../assets/contactus.svg'
 const ReachOut = () => {
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -96,7 +96,7 @@ const ReachOut = () => {
 
        {/* Left Side: Image */}
        <div className="hidden lg:col-span-5 lg:flex lg:mt-0 w-full md:w-1/2 p-4">
-        <img src="src/assets/contactus.svg" alt="Contact Us" className="max-w-full h-auto" />
+        <img src={Contactus} alt="Contact Us" className="max-w-full h-auto" />
       </div>
     </div>
   );
