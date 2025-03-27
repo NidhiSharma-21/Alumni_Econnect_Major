@@ -21,6 +21,8 @@ import EventForm from "./pages/DashBoard/CreateEvent";
 import JobPostForm from "./pages/JobPostForm";
 import JobPostShow from "./pages/JobPostCard";
 import ProfilePage from "./pages/DashBoard/ProfilePage";
+import PageNotFound from "./pages/PageNotFound";
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -77,7 +79,7 @@ const App = () => {
         <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
           
         {/* 404 Page route */}
-        <Route path="/*" element={<Home/>} />
+        <Route path="/*" element={<PageNotFound/>} />
         {/*Bloge route*/ }
         
         

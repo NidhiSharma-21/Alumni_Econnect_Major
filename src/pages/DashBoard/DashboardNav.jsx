@@ -13,9 +13,14 @@ import {
 import Dropdown from '../../components/Navbar/DropDown';
 import SideDrawer from '../../components/Navbar/SideDrawer';
 import { userService } from '../../services/userServices';
+import ChatWindow from '../../components/Chats/ChatWindow'
 
 const DashNavbar = () => {
   const navigate = useNavigate();
+  const handleChatToggle = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
   const [isEventDropdownOpen, setIsEventDropdownOpen] = useState(false);
@@ -162,6 +167,27 @@ const DashNavbar = () => {
                 onItemClick={() => setIsEventDropdownOpen(false)}
               />
             </div>
+ {/* Chat Button */}
+ <button
+            onClick={handleChatToggle}
+            className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
+          >
+            <svg
+              className="h-5 w-5 mr-1"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <span>Messaging</span>
+          </button>
 
             {/* Jobpost with Dropdown */}
             <div className="relative flex" ref={jobDropdownRef}>
@@ -380,6 +406,8 @@ const DashNavbar = () => {
       )}
 
       <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} user={user} detailuser={detailuser} />
+      {isChatOpen && <ChatWindow onClose={handleChatToggle} />}
+
     </nav>
   );
 };
