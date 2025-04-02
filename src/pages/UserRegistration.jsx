@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Input from '../components/Shared/Input/Input';
 import { userService } from '../services/userServices';
+import { useNavigate } from 'react-router-dom';
 const UserRegistration = () => {
+  const navigate=useNavigate()
 
   const { register, control, handleSubmit } = useForm();
 
@@ -24,20 +26,38 @@ const UserRegistration = () => {
   const onSubmit1 = async (data) => {
     try {
       console.log("Form1 Data : ", data);
+  
+      // Step 1: Check if user is already registered
+      const isRegistered = await userService.checkUserExists(data.gmail); // API call
+      if (isRegistered) {
+        alert("This email is already registered. Please log in ");
+        return;
+      }
+  
+      // Step 2: If not registered, proceed with OTP sending
       const response = await userService.sendOTP(data.gmail, data.name);
-      console.log("Response : ", response);
+      console.log("OTP Sent Response:", response);
       setOtpSent(true);
-
+  
+      // Step 3: Fetch College ID if email domain matches
       const domain = '@' + data.gmail.split('@')[1];
       const collegeDomain = encodeURIComponent(domain);
-
       const collegeIdResponse = await userService.getCollegeId(collegeDomain);
-      console.log("College Id : ", collegeIdResponse);
-      setCollegeId(collegeIdResponse.data.id);
+      
+      if (collegeIdResponse && collegeIdResponse.data) {
+        setCollegeId(collegeIdResponse.data.id);
+      } else {
+        alert("This email domain is not associated with any registered college.");
+        return;
+      }
+  
     } catch (error) {
-
+      console.error("Error during registration:", error);
+      alert("Something went wrong. Please try again.");
     }
-  }
+  };
+  
+  
 
   const optVerify = async (data) => {
     try {
@@ -67,13 +87,43 @@ const UserRegistration = () => {
   const onSubmit2 = async (data) => {
     try {
       console.log("Form2 Data : ", data);
+      
+      // Ensure courseId is available
+      if (!course || !course.courseId) {
+        alert("Please select a valid course before submitting.");
+        return;
+      }
+      
       data.courseId = course.courseId;
+  
+      // Send registration data
       const response = await userService.addStudent(data);
+  
       console.log("Student Added : ", response);
+  
+      if (response && response.success) { 
+        alert("Account Created Successfully! Redirecting to Login...");
+        
+        // Reset form state (if needed)
+        setStep(1);
+        setEmailVerified(false);
+        setOtpSent(false);
+        setCollegeId('');
+        setCourses([]);
+        setBranches([]);
+        setCourse(null);
+        
+        // Redirect to login page
+        navigate('/login');  
+      } else {
+        alert(response.message || "Registration failed. Please try again.");
+      }
+  
     } catch (error) {
-      console.error(error);
+      console.error("Error creating account:", error);
+      alert("Something went wrong. Please try again.");
     }
-  }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center p-5">
       <div className="w-full max-w-2xl h-auto mt-10 md:mt-26 lg:mt-20">
