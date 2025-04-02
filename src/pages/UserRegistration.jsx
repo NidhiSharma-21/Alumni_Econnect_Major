@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const UserRegistration = () => {
   const navigate = useNavigate();
-  const { register, control, handleSubmit } = useForm();
+  const { register, control, handleSubmit, reset } = useForm();
   const [step, setStep] = useState(1);
   const [emailVerified, setEmailVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
@@ -16,6 +16,20 @@ const UserRegistration = () => {
   const [courses, setCourses] = useState([]);
   const [branches, setBranches] = useState([]);
   const [course, setCourse] = useState();
+
+  const resetFormAndNavigate = () => {
+    // Reset all form states
+    reset();
+    setStep(1);
+    setEmailVerified(false);
+    setOtpSent(false);
+    setCollegeId('');
+    setCourses([]);
+    setBranches([]);
+    setCourse(null);
+    // Navigate to default page (home)
+    navigate('/');
+  };
 
   const handleBackToStep1 = () => {
     setStep(1);
@@ -32,13 +46,28 @@ const UserRegistration = () => {
       if (isRegistered) {
         toast.error("This email is already registered. Redirecting to login...", {
           position: "top-center",
-          autoClose: 3500,
+          autoClose: 3000,
           onClose: () => navigate('/login')
         });
         return;
       }
   
-      // Step 2: If not registered, proceed with OTP sending
+      // Step 2: Check if email domain is associated with a college
+      const domain = '@' + data.gmail.split('@')[1];
+      const collegeDomain = encodeURIComponent(domain);
+      const collegeIdResponse = await userService.getCollegeId(collegeDomain);
+      
+      if (!collegeIdResponse?.data?.id) {
+        toast.error("This email domain is not associated with any registered college.", {
+          position: "top-center",
+          autoClose: 5000,
+          onClose: resetFormAndNavigate // Reset and navigate on close
+        });
+        return;
+      }
+      
+      // Step 3: If domain is valid, proceed with OTP sending
+      setCollegeId(collegeIdResponse.data.id);
       const response = await userService.sendOTP(data.gmail, data.name);
       console.log("OTP Sent Response:", response);
       setOtpSent(true);
@@ -46,21 +75,6 @@ const UserRegistration = () => {
         position: "top-center",
         autoClose: 3000,
       });
-  
-      // Step 3: Fetch College ID if email domain matches
-      const domain = '@' + data.gmail.split('@')[1];
-      const collegeDomain = encodeURIComponent(domain);
-      const collegeIdResponse = await userService.getCollegeId(collegeDomain);
-      
-      if (collegeIdResponse && collegeIdResponse.data) {
-        setCollegeId(collegeIdResponse.data.id);
-      } else {
-        toast.error("This email domain is not associated with any registered college.", {
-          position: "top-center",
-          autoClose: 5000,
-        });
-        return;
-      }
   
     } catch (error) {
       console.error("Error during registration:", error);
@@ -112,7 +126,7 @@ const UserRegistration = () => {
     try {
       console.log("Form2 Data : ", data);
       
-      if (!course || !course.courseId) {
+      if (!course?.courseId) {
         toast.error("Please select a valid course before submitting.", {
           position: "top-center",
           autoClose: 5000,
@@ -125,22 +139,14 @@ const UserRegistration = () => {
       const response = await userService.addStudent(data);
       console.log("Student Added : ", response);
   
-      if (response && response.success) { 
-        toast.success("Account Created Successfully! Redirecting to Login...", {
+      if (response?.success) { 
+        toast.success("Account Created Successfully! Redirecting to Home...", {
           position: "top-center",
           autoClose: 3000,
-          onClose: () => navigate('/login')
+          onClose: resetFormAndNavigate // Reset and navigate on success
         });
-        
-        setStep(1);
-        setEmailVerified(false);
-        setOtpSent(false);
-        setCollegeId('');
-        setCourses([]);
-        setBranches([]);
-        setCourse(null);
       } else {
-        toast.error(response.message || "Registration failed. Please try again.", {
+        toast.error(response?.message || "Registration failed. Please try again.", {
           position: "top-center",
           autoClose: 5000,
         });
@@ -188,9 +194,7 @@ const UserRegistration = () => {
                     <Input
                       label="Name: "
                       placeholder="Enter your name"
-                      {...register("name", {
-                        required: true,
-                      })}
+                      {...register("name", { required: true })}
                     />
                   )}
                 />
@@ -198,13 +202,20 @@ const UserRegistration = () => {
                   name="gmail"
                   control={control}
                   defaultValue=""
-                  rules={{ required: "Email is required" }}
+                  rules={{ 
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  }}
                   render={({ field }) => (
                     <Input
                       label="Email: "
                       placeholder="Enter your email"
-                      {...register("gmail", {
+                      {...register("gmail", { 
                         required: true,
+                        pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
                       })}
                     />
                   )}
@@ -231,9 +242,7 @@ const UserRegistration = () => {
                         <Input
                           label="OTP: "
                           placeholder="Enter your otp"
-                          {...register("otp", {
-                            required: true,
-                          })}
+                          {...register("otp", { required: true })}
                         />
                       )}
                     />
@@ -252,17 +261,22 @@ const UserRegistration = () => {
           {step === 2 && emailVerified && (
             <div className="step-2">
               <div className="flex items-center mb-6">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 cursor-pointer text-[#d27511] mr-2"
+                <button 
                   onClick={handleBackToStep1}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                  className="flex items-center text-[#d27511] hover:text-[#b3660e]"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m0 0l6 6m-6-6l6-6" />
-                </svg>
-                <h2 className="text-2xl font-bold text-[#d27511]">Step 2: Graduation Details</h2>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m0 0l6 6m-6-6l6-6" />
+                  </svg>
+                  Back
+                </button>
+                <h2 className="text-2xl font-bold text-[#d27511] ml-4">Step 2: Graduation Details</h2>
               </div>
               <form onSubmit={handleSubmit(onSubmit2)}>
                 <div style={{ display: 'none' }}>
@@ -270,16 +284,8 @@ const UserRegistration = () => {
                     name="collegeId"
                     control={control}
                     defaultValue={collegeId}
-                    rules={{ required: "collegeId is required" }}
                     render={({ field }) => (
-                      <Input
-                        readonly
-                        label="collegeId: "
-                        placeholder="Enter your collegeId"
-                        {...register("collegeId", {
-                          required: true,
-                        })}
-                      />
+                      <input type="hidden" {...field} />
                     )}
                   />
                 </div>
@@ -290,34 +296,28 @@ const UserRegistration = () => {
                     name="courseId"
                     control={control}
                     defaultValue=""
-                    rules={{ required: "courseId is required" }}
+                    rules={{ required: "Course is required" }}
                     render={({ field }) => (
                       <select
                         {...field}
-                        id="courseId"
                         className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
                         required
                         onChange={(e) => {
-                          field.onChange(e.target.value);
+                          field.onChange(e);
                           handleCourseChange(e.target.value);
                         }}
                       >
-                        <option value="">
-                          Select your course
-                        </option>
-                        {courses && courses.length > 0 ? (
-                          courses.map((course) => (
-                            <option key={course.id} value={course.id}>
-                              {course.name}
-                            </option>
-                          ))
-                        ) : (
-                          <option disabled>No courses available</option>
-                        )}
+                        <option value="">Select your course</option>
+                        {courses?.map((course) => (
+                          <option key={course.id} value={course.id}>
+                            {course.name}
+                          </option>
+                        ))}
                       </select>
                     )}
                   />
                 </div>
+
                 <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">Branch:</label>
                   <Controller
@@ -328,68 +328,86 @@ const UserRegistration = () => {
                     render={({ field }) => (
                       <select
                         {...field}
-                        id="branch"
                         className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
                         required
+                        disabled={!branches.length}
                       >
-                        <option value="" disabled>
-                          Select your branch
-                        </option>
-                        {branches && branches.length > 0 ? (
-                          branches.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))
-                        ) : (
-                          <option disabled>No branches available</option>
-                        )}
+                        <option value="">Select your branch</option>
+                        {branches?.map((branch) => (
+                          <option key={branch.id} value={branch.id}>
+                            {branch.name}
+                          </option>
+                        ))}
                       </select>
                     )}
                   />
                 </div>
+
                 <Controller
                   name="admissionYear"
                   control={control}
                   defaultValue=""
-                  rules={{ required: "admissionYear is required" }}
+                  rules={{ 
+                    required: "Admission year is required",
+                    pattern: {
+                      value: /^[0-9]{4}$/,
+                      message: "Enter a valid year (YYYY)"
+                    }
+                  }}
                   render={({ field }) => (
                     <Input
-                      label="admissionYear: "
-                      placeholder="Enter your admissionYear"
-                      {...register("admissionYear", {
+                      label="Admission Year: "
+                      placeholder="Enter your admission year (YYYY)"
+                      {...register("admissionYear", { 
                         required: true,
+                        pattern: /^[0-9]{4}$/
                       })}
                     />
                   )}
                 />
+
                 <Controller
                   name="passoutYear"
                   control={control}
                   defaultValue=""
-                  rules={{ required: "passoutYear is required" }}
+                  rules={{ 
+                    required: "Passout year is required",
+                    pattern: {
+                      value: /^[0-9]{4}$/,
+                      message: "Enter a valid year (YYYY)"
+                    }
+                  }}
                   render={({ field }) => (
                     <Input
-                      label="passoutYear: "
-                      placeholder="Enter your passoutYear"
-                      {...register("passoutYear", {
+                      label="Passout Year: "
+                      placeholder="Enter your passout year (YYYY)"
+                      {...register("passoutYear", { 
                         required: true,
+                        pattern: /^[0-9]{4}$/
                       })}
                     />
                   )}
                 />
+
                 <Controller
                   name="password"
                   control={control}
                   defaultValue=""
-                  rules={{ required: "password is required" }}
+                  rules={{ 
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters"
+                    }
+                  }}
                   render={({ field }) => (
                     <Input
-                      label="password: "
+                      label="Password: "
                       type="password"
-                      placeholder="Enter your password"
-                      {...register("password", {
+                      placeholder="Enter your password (min 8 characters)"
+                      {...register("password", { 
                         required: true,
+                        minLength: 8
                       })}
                     />
                   )}
@@ -397,7 +415,7 @@ const UserRegistration = () => {
                 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
+                  className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105 mt-4"
                 >
                   Create Account
                 </button>
