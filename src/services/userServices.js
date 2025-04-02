@@ -18,6 +18,14 @@ class UserService {
             console.error(error);
         }
     }
+    async checkUserExists(gmail){
+        try {
+            const {data} = await instance.post(`User/CheckRegisteredUser/${gmail}`);
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     async verifyOTP(gmail, otp){
         try {
             const {data} = await instance.post(`User/Verify/${gmail}/${otp}`);
