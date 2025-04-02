@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import NavDash from "./components/Navbar/NavDash"; // Import Navbar
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import NavDash from "./components/Navbar/NavDash";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CreateAccount from "./pages/AdminRegistration";
@@ -27,65 +27,48 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <div className="">
-      {/* Pass the login state to NavDash */}
-      <NavDash isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-
-      {/* Define application routes */}
-      <Routes>
-        {/* Home route (accessible to all users) */}
-        <Route path="/" element={<Home />} />
+    <Router>
+      <div className="app-container">
+        <NavDash isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
         
-        {/* Login route (passes setIsLoggedIn to change login state upon login) */}
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <main className="main-content">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+            <Route path="/adminaccount" element={<CreateAccount />} />
+            <Route path="/features" element={<AlumniFeatures />} />
+            <Route path="/collegefunctions" element={<CollegeRegistration />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/userregistration" element={<UserRegistration />} />
+            <Route path="/facultyregistration" element={<FacultyRegistration />} />
 
-        {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
-        <Route path="/adminaccount" element={<CreateAccount/>} />
-        <Route path="/features" element={<AlumniFeatures/>} />
-        <Route path="/collegefunctions" element={<CollegeRegistration/>} />
-        <Route path="/about" element={<AboutUs/>}/>
-        
-        {/* User Registration route */}
-        <Route path="/userregistration" element={<UserRegistration/>}/>
-        {/* <Route path="/event" element={<Event/>} /> */}
-        <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      >
-        {/* Nested Routes */}
-        <Route index element={<Navigate to="blog" replace />} /> {/* Default when /dashboard is accessed */}
-        <Route path="blog" element={<BlogsPage />} >
-        <Route path="create" element={<BlogEditor />} />
+            {/* Protected Dashboard Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="blog" replace />} />
+              <Route path="blog" element={<BlogsPage />}>
+                <Route path="create" element={<BlogEditor />} />
+              </Route>
+              <Route path="eventshow" element={<EventShow />} />
+              <Route path="eventshow/eventCreate" element={<EventForm />} />
+              <Route path="jobpost" element={<JobPostShow />} />
+              <Route path="jobpost/jobform" element={<JobPostForm />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
 
-        </Route>
-        <Route path="eventshow" element={<EventShow/>} />
-        <Route path="eventshow/eventCreate" element={<EventForm/>} />
-
-        <Route path="jobpost" element={<JobPostShow/>}/>
-        <Route path="jobpost/jobform" element={<JobPostForm/>}/>
-        <Route path="profile" element={<ProfilePage/>}/>
-
-        
-        {/* <Route path="jobpost" element={<Jobpost />} /> */}
-      </Route>
-
-        
-        
-        {/* Faculty Registration route */}
-        <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
-          
-        {/* 404 Page route */}
-        <Route path="/*" element={<PageNotFound/>} />
-        {/*Bloge route*/ }
-        
-        
-
-      </Routes>
-    </div>
+            {/* 404 Page */}
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 };
 
