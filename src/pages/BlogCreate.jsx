@@ -1,17 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import BlogContent from '../components/BlogsCreateComponent/BlogContent';
+import { useNavigate } from 'react-router-dom';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import { stateToHTML } from 'draft-js-export-html';
+import { convertFromHTML } from 'draft-js';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ImageUploader from '../components/BlogsCreateComponent/ImageUploader';
 import TagInput from '../components/BlogsCreateComponent/TagInput';
 import { blogService } from '../services/blogService';
 import { MdPersonSearch, MdGroupAdd, MdOutlineTrendingUp } from 'react-icons/md';
 import blogImage from '../assets/blog.svg';
 
+// Initialize editor with empty state
+const createEmptyEditorState = () => {
+  try {
+    return EditorState.createEmpty();
+  } catch (error) {
+    console.error("Error creating editor state:", error);
+    return EditorState.createEmpty();
+  }
+};
+
 const BlogEditor = () => {
-    const [content, setContent] = useState('');
+    const navigate = useNavigate();
+    const [editorState, setEditorState] = useState(createEmptyEditorState());
     const [tags, setTags] = useState([]);
     const [customTags, setCustomTags] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editorError, setEditorError] = useState(null);
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -21,6 +40,7 @@ const BlogEditor = () => {
                 setTags(allTags || []);
             } catch (error) {
                 console.error("Error fetching tags:", error);
+                toast.error('Failed to load tags');
             } finally {
                 setLoading(false);
             }
@@ -36,37 +56,72 @@ const BlogEditor = () => {
         return tagsList.map((tag) => tag.id).filter((id) => id !== null);
     };
 
-    const sanitizeContent = (str) => {
-        return str.replace(/^\s+|\s+$/g, '').replace(/\u200B/g, ''); // Trim and remove zero-width spaces
+    const sanitizeContent = (html) => {
+        try {
+            const blocksFromHTML = convertFromHTML(html);
+            const state = ContentState.createFromBlockArray(
+                blocksFromHTML.contentBlocks,
+                blocksFromHTML.entityMap
+            );
+            return stateToHTML(state);
+        } catch (error) {
+            console.error("Error sanitizing content:", error);
+            return html;
+        }
+    };
+
+    const handleEditorChange = (newEditorState) => {
+        try {
+            setEditorState(newEditorState);
+            setEditorError(null);
+        } catch (error) {
+            console.error("Editor error:", error);
+            setEditorError("There was an error with the editor. Please try again.");
+        }
     };
 
     const handleSubmit = async () => {
-        const trimmedContent = sanitizeContent(content); // Use the sanitize function
-        console.log("Trimmed Content:", trimmedContent);
-
-        if (!trimmedContent || imageUrls.length === 0 || customTags.length === 0) {
-            alert("Please fill in all fields and add at least one tag and image.");
-            return;
-        }
-
-        const tagIds = getTagIds([...customTags]);
-        const blogPost = {
-            Description: trimmedContent, // Use sanitized content
-            Tags: tagIds,
-            MediaFiles: imageUrls,
-        };
-
         try {
+            const contentState = editorState.getCurrentContent();
+            const htmlContent = stateToHTML(contentState);
+            const trimmedContent = sanitizeContent(htmlContent);
+            
+            if (!trimmedContent) {
+                toast.error('Blog content cannot be empty');
+                return;
+            }
+            if (imageUrls.length === 0) {
+                toast.error('Please add at least one image');
+                return;
+            }
+            if (customTags.length === 0) {
+                toast.error('Please add at least one tag');
+                return;
+            }
+
+            const tagIds = getTagIds([...customTags]);
+            const blogPost = {
+                Description: trimmedContent,
+                Tags: tagIds,
+                MediaFiles: imageUrls,
+            };
+
             setLoading(true);
             const response = await blogService.addblog(blogPost);
-            console.log("Blog Posted Successfully:", response);
+            
+            toast.success('Blog created successfully!', {
+                autoClose: 2000,
+                onClose: () => navigate('/dashboard/blog')
+            });
+            
             // Reset state after successful submission
-            setContent('');
+            setEditorState(createEmptyEditorState());
             setCustomTags([]);
             setImageUrls([]);
+            
         } catch (err) {
             console.error("Error posting blog:", err);
-            alert("An error occurred while posting the blog. Please try again.");
+            toast.error('Failed to create blog. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -75,15 +130,30 @@ const BlogEditor = () => {
     const addCustomTag = useCallback((tag) => {
         if (tag && !customTags.some(t => t.id === tag.id)) {
             setCustomTags((prev) => [...prev, tag]);
+            toast.success(`Tag "${tag.name}" added`, { autoClose: 1500 });
         }
     }, [customTags]);
 
     const removeCustomTag = (tagId) => {
+        const tagToRemove = customTags.find(t => t.id === tagId);
         setCustomTags(customTags.filter((t) => t.id !== tagId));
+        toast.info(`Tag "${tagToRemove?.name}" removed`, { autoClose: 1500 });
     };
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-7xl mx-auto">
                 <div className="flex flex-col lg:flex-row">
                     <div className="lg:w-2/3 lg:pr-8">
@@ -98,7 +168,49 @@ const BlogEditor = () => {
                                 addCustomTag={addCustomTag}
                                 removeCustomTag={removeCustomTag}
                             />
-                            <BlogContent content={content} setContent={setContent} />
+                            
+                            {/* React Draft Wysiwyg Editor with error handling */}
+                            <div className="mt-4 border rounded-lg p-2 min-h-[300px]">
+                                {editorError && (
+                                    <div className="text-red-500 mb-2">{editorError}</div>
+                                )}
+                                <Editor
+                                    editorState={editorState}
+                                    onEditorStateChange={handleEditorChange}
+                                    wrapperClassName="wrapper-class"
+                                    editorClassName="editor-class"
+                                    toolbarClassName="toolbar-class"
+                                    toolbar={{
+                                        options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'link', 'emoji', 'image', 'history'],
+                                        inline: { 
+                                            inDropdown: true,
+                                            options: ['bold', 'italic', 'underline', 'strikethrough']
+                                        },
+                                        blockType: {
+                                            inDropdown: true,
+                                            options: ['Normal', 'H1', 'H2', 'H3', 'Blockquote']
+                                        },
+                                        list: { 
+                                            inDropdown: true,
+                                            options: ['unordered', 'ordered']
+                                        },
+                                        textAlign: { 
+                                            inDropdown: true,
+                                            options: ['left', 'center', 'right', 'justify']
+                                        },
+                                        link: { 
+                                            inDropdown: true,
+                                            showOpenOptionOnHover: true,
+                                            defaultTargetOption: '_self'
+                                        },
+                                        history: { 
+                                            inDropdown: true,
+                                            options: ['undo', 'redo']
+                                        },
+                                    }}
+                                />
+                            </div>
+                            
                             <div className="mt-8 text-center">
                                 <button
                                     onClick={handleSubmit}
