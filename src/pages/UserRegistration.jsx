@@ -3,34 +3,38 @@ import { Controller, useForm } from 'react-hook-form';
 import Input from '../components/Shared/Input/Input';
 import { userService } from '../services/userServices';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const UserRegistration = () => {
-  const navigate=useNavigate()
-
+  const navigate = useNavigate();
   const { register, control, handleSubmit } = useForm();
-
   const [step, setStep] = useState(1);
   const [emailVerified, setEmailVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [collegeId, setCollegeId] = useState('');
-  const [courses, setCourses] = useState([])
-  const [branches, setBranches] = useState([])
-  const [course, setCourse] = useState()
+  const [courses, setCourses] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [course, setCourse] = useState();
+
   const handleBackToStep1 = () => {
     setStep(1);
     setOtpSent(false);
-    setFormData({ ...formData, otp: '' });
     setEmailVerified(false);
-    setOtpVerifiedMessage('');
-    setOtpErrorMessage('');
   };
+
   const onSubmit1 = async (data) => {
     try {
       console.log("Form1 Data : ", data);
   
       // Step 1: Check if user is already registered
-      const isRegistered = await userService.checkUserExists(data.gmail); // API call
+      const isRegistered = await userService.checkUserExists(data.gmail);
       if (isRegistered) {
-        alert("This email is already registered. Please log in ");
+        toast.error("This email is already registered. Redirecting to login...", {
+          position: "top-center",
+          autoClose: 3500,
+          onClose: () => navigate('/login')
+        });
         return;
       }
   
@@ -38,6 +42,10 @@ const UserRegistration = () => {
       const response = await userService.sendOTP(data.gmail, data.name);
       console.log("OTP Sent Response:", response);
       setOtpSent(true);
+      toast.success("OTP sent to your email!", {
+        position: "top-center",
+        autoClose: 3000,
+      });
   
       // Step 3: Fetch College ID if email domain matches
       const domain = '@' + data.gmail.split('@')[1];
@@ -47,17 +55,21 @@ const UserRegistration = () => {
       if (collegeIdResponse && collegeIdResponse.data) {
         setCollegeId(collegeIdResponse.data.id);
       } else {
-        alert("This email domain is not associated with any registered college.");
+        toast.error("This email domain is not associated with any registered college.", {
+          position: "top-center",
+          autoClose: 5000,
+        });
         return;
       }
   
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
     }
   };
-  
-  
 
   const optVerify = async (data) => {
     try {
@@ -66,11 +78,19 @@ const UserRegistration = () => {
       setEmailVerified(true);
       const resp2 = await userService.getCollegeCourse(collegeId);
       setStep(2);
-      setCourses(resp2)
+      setCourses(resp2);
+      toast.success("Email verified successfully!", {
+        position: "top-center",
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error(error);
+      toast.error("Invalid OTP. Please try again.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
     }
-  }
+  };
 
   const handleCourseChange = async (value) => {
     try {
@@ -78,33 +98,40 @@ const UserRegistration = () => {
       setCourse(newCourse);
       const response = await userService.getCollegeBranchUnderCourse(value);
       setBranches(response);
-      console.log("Branches fetched : ", response)
+      console.log("Branches fetched : ", response);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load branches. Please try again.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
     }
-  }
+  };
 
   const onSubmit2 = async (data) => {
     try {
       console.log("Form2 Data : ", data);
       
-      // Ensure courseId is available
       if (!course || !course.courseId) {
-        alert("Please select a valid course before submitting.");
+        toast.error("Please select a valid course before submitting.", {
+          position: "top-center",
+          autoClose: 5000,
+        });
         return;
       }
       
       data.courseId = course.courseId;
   
-      // Send registration data
       const response = await userService.addStudent(data);
-  
       console.log("Student Added : ", response);
   
       if (response && response.success) { 
-        alert("Account Created Successfully! Redirecting to Login...");
+        toast.success("Account Created Successfully! Redirecting to Login...", {
+          position: "top-center",
+          autoClose: 3000,
+          onClose: () => navigate('/login')
+        });
         
-        // Reset form state (if needed)
         setStep(1);
         setEmailVerified(false);
         setOtpSent(false);
@@ -112,20 +139,35 @@ const UserRegistration = () => {
         setCourses([]);
         setBranches([]);
         setCourse(null);
-        
-        // Redirect to login page
-        navigate('/login');  
       } else {
-        alert(response.message || "Registration failed. Please try again.");
+        toast.error(response.message || "Registration failed. Please try again.", {
+          position: "top-center",
+          autoClose: 5000,
+        });
       }
-  
     } catch (error) {
       console.error("Error creating account:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-5">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <div className="w-full max-w-2xl h-auto mt-10 md:mt-26 lg:mt-20">
         <div className="bg-white shadow-lg rounded-lg p-8 space-y-6">
           {step === 1 && (
@@ -137,7 +179,6 @@ const UserRegistration = () => {
                 Step 1: Basic Information
               </h2>
               <form onSubmit={handleSubmit(onSubmit1)}>
-
                 <Controller
                   name="name"
                   control={control}
@@ -147,7 +188,6 @@ const UserRegistration = () => {
                     <Input
                       label="Name: "
                       placeholder="Enter your name"
-
                       {...register("name", {
                         required: true,
                       })}
@@ -163,26 +203,12 @@ const UserRegistration = () => {
                     <Input
                       label="Email: "
                       placeholder="Enter your email"
-
                       {...register("gmail", {
                         required: true,
                       })}
                     />
                   )}
                 />
-                {/* <div className="mb-4">
-                  <label className="block font-semibold text-gray-700 mb-2">College Name:</label>
-                  <input
-                    type="text"
-                    name="collegeName"
-                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#d27511] transition"
-                    value={formData.collegeName}
-                    readOnly 
-                  />
-                  {collegeErrorMessage && (
-                    <p className="text-red-500 text-sm mt-2">{collegeErrorMessage}</p>
-                  )}
-                </div> */}
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
@@ -205,7 +231,6 @@ const UserRegistration = () => {
                         <Input
                           label="OTP: "
                           placeholder="Enter your otp"
-
                           {...register("otp", {
                             required: true,
                           })}
@@ -218,8 +243,8 @@ const UserRegistration = () => {
                     >
                       Verify OTP
                     </button>
-
-                  </div></form>
+                  </div>
+                </form>
               )}
             </div>
           )}
@@ -240,7 +265,6 @@ const UserRegistration = () => {
                 <h2 className="text-2xl font-bold text-[#d27511]">Step 2: Graduation Details</h2>
               </div>
               <form onSubmit={handleSubmit(onSubmit2)}>
-
                 <div style={{ display: 'none' }}>
                   <Controller
                     name="collegeId"
@@ -260,13 +284,8 @@ const UserRegistration = () => {
                   />
                 </div>
 
-
-
-                {/* Additional fields for College ID, Course, and Branch */}
                 <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">Course:</label>
-
-                  {/* Controller for branchId */}
                   <Controller
                     name="courseId"
                     control={control}
@@ -274,14 +293,13 @@ const UserRegistration = () => {
                     rules={{ required: "courseId is required" }}
                     render={({ field }) => (
                       <select
-
                         {...field}
                         id="courseId"
                         className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
                         required
                         onChange={(e) => {
-                          field.onChange(e.target.value); // Update form state
-                          handleCourseChange(e.target.value); // Call your custom method
+                          field.onChange(e.target.value);
+                          handleCourseChange(e.target.value);
                         }}
                       >
                         <option value="">
@@ -302,8 +320,6 @@ const UserRegistration = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block font-semibold text-gray-700 mb-2">Branch:</label>
-
-                  {/* Controller for branchId */}
                   <Controller
                     name="branchId"
                     control={control}
@@ -333,7 +349,6 @@ const UserRegistration = () => {
                   />
                 </div>
                 <Controller
-
                   name="admissionYear"
                   control={control}
                   defaultValue=""
@@ -342,7 +357,6 @@ const UserRegistration = () => {
                     <Input
                       label="admissionYear: "
                       placeholder="Enter your admissionYear"
-
                       {...register("admissionYear", {
                         required: true,
                       })}
@@ -358,41 +372,35 @@ const UserRegistration = () => {
                     <Input
                       label="passoutYear: "
                       placeholder="Enter your passoutYear"
-
                       {...register("passoutYear", {
                         required: true,
                       })}
                     />
                   )}
                 />
-                
-
                 <Controller
-                name="password"
-                control={control}
-                defaultValue=""
-                rules={{ required: "password is required" }}
-                render={({ field }) => (
-                  <Input
-                    label="password: "
-                    type="password"
-                    placeholder="Enter your password"
-              
-                    {...register("password", {
-                      required: true,
-                    })}
-                  />
-                )}
-              />
+                  name="password"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: "password is required" }}
+                  render={({ field }) => (
+                    <Input
+                      label="password: "
+                      type="password"
+                      placeholder="Enter your password"
+                      {...register("password", {
+                        required: true,
+                      })}
+                    />
+                  )}
+                />
                 
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-[#d27511] to-[#ff7e5f] text-white font-bold rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105"
-
                 >
                   Create Account
                 </button>
-
               </form>
             </div>
           )}
