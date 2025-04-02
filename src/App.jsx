@@ -1,16 +1,19 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import NavDash from "./components/Navbar/NavDash";
+import React, { useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import NavDash from "./components/Navbar/NavDash"; // Import Navbar
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CreateAccount from "./pages/AdminRegistration";
 import CollegeRegistration from "./pages/CollegeFunctionalites";
 import AboutUs from "./pages/AboutUs";
 import UserRegistration from "./pages/UserRegistration";
+import FeatureSection from "./components/FeaturesCard/Feature";
 import AlumniFeatures from "./pages/Features";
 import FacultyRegistration from "./pages/FacultyRegistration";
+
 import BlogsPage from "./pages/BlogsPage";
 import BlogEditor from "./pages/BlogCreate";
+// import DashNavbar from "./pages/DashBoard/DashboardNav";
 import DashboardPage from "./pages/DashBoard/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EventShow from "./pages/DashBoard/EventShow";
@@ -22,84 +25,69 @@ import PageNotFound from "./pages/PageNotFound";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const location = useLocation();
-
-  // Check auth status on initial load and route changes
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Replace with your actual auth check logic
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-      } catch (error) {
-        console.error("Auth check failed:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [location.pathname]);
-
-
 
   return (
-    <div className="app-container">
+    <div className="">
+      {/* Pass the login state to NavDash */}
       <NavDash isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      
-      <main className="main-content">
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route 
-            path="/login" 
-            element={
-              isLoggedIn ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <Login setIsLoggedIn={setIsLoggedIn} />
-              )
-            } 
-          />
-          <Route path="/adminaccount" element={<CreateAccount />} />
-          <Route path="/features" element={<AlumniFeatures />} />
-          <Route path="/collegefunctions" element={<CollegeRegistration />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/userregistration" element={<UserRegistration />} />
-          <Route path="/facultyregistration" element={<FacultyRegistration />} />
 
-          {/* Protected Dashboard Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute isLoggedIn={isLoggedIn}>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="blog" replace />} />
-            <Route path="blog">
-              <Route index element={<BlogsPage />} />
-              <Route path="create" element={<BlogEditor />} />
-            </Route>
-            <Route path="eventshow">
-              <Route index element={<EventShow />} />
-              <Route path="eventCreate" element={<EventForm />} />
-            </Route>
-            <Route path="jobpost">
-              <Route index element={<JobPostShow />} />
-              <Route path="jobform" element={<JobPostForm />} />
-            </Route>
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
+      {/* Define application routes */}
+      <Routes>
+        {/* Home route (accessible to all users) */}
+        <Route path="/" element={<Home />} />
+        
+        {/* Login route (passes setIsLoggedIn to change login state upon login) */}
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
 
-          {/* Error Handling */}
-          <Route path="/404" element={<PageNotFound />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </main>
+        {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
+        <Route path="/adminaccount" element={<CreateAccount/>} />
+        <Route path="/features" element={<AlumniFeatures/>} />
+        <Route path="/collegefunctions" element={<CollegeRegistration/>} />
+        <Route path="/about" element={<AboutUs/>}/>
+        
+        {/* User Registration route */}
+        <Route path="/userregistration" element={<UserRegistration/>}/>
+        {/* <Route path="/event" element={<Event/>} /> */}
+        <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      >
+        {/* Nested Routes */}
+        <Route index element={<Navigate to="blog" replace />} /> {/* Default when /dashboard is accessed */}
+        <Route path="blog" element={<BlogsPage />} >
+        <Route path="create" element={<BlogEditor />} />
+
+        </Route>
+        <Route path="eventshow" element={<EventShow/>} />
+        <Route path="eventshow/eventCreate" element={<EventForm/>} />
+
+        <Route path="jobpost" element={<JobPostShow/>}/>
+        <Route path="jobpost/jobform" element={<JobPostForm/>}/>
+        <Route path="profile" element={<ProfilePage/>}/>
+
+        
+        {/* <Route path="jobpost" element={<Jobpost />} /> */}
+      </Route>
+
+        
+        
+        {/* Faculty Registration route */}
+        <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
+          
+        {/* 404 Page route */}
+        <Route path="/*" element={<PageNotFound/>} />
+        {/*Bloge route*/ }
+        
+        
+
+      </Routes>
     </div>
   );
 };
 
 export default App;
+ 
