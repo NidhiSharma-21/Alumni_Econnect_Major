@@ -95,10 +95,9 @@ const BlogsPage = () => {
 
     if (searchTerm.trim() !== '') {
       const lowerSearchTerm = searchTerm.toLowerCase();
-      tempBlogs = tempBlogs.filter(
-        (blog) =>
-          blog.name.toLowerCase().includes(lowerSearchTerm) ||
-          blog.description.toLowerCase().includes(lowerSearchTerm)
+      tempBlogs = tempBlogs.filter((blog) =>
+        (blog.name?.toLowerCase().includes(lowerSearchTerm) || 
+         blog.description?.toLowerCase().includes(lowerSearchTerm))
       );
     }
 
@@ -141,6 +140,7 @@ const BlogsPage = () => {
                 commentsCount={blog.commentsCount}
                 comments={blog.comments}
                 createdOn={blog.createdOn}
+                
               />
             ))
           ) : (
