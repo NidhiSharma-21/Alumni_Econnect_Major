@@ -57,11 +57,11 @@ const Comment = ({ comment, onCommentUpdated, onCommentRemoved }) => {
         <article className="mb-3 text-base bg-white rounded-lg dark:bg-gray-900 p-4">
             <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                    <img
-                        className="mr-2 w-6 h-6 rounded-full"
-                        src={comment.user.imageUrl}
-                        alt={comment.user.name}
-                    />
+                <img
+  src={comment?.user?.imageUrl || '/default-avatar.png'} // ✅ Uses default if undefined
+  alt={comment?.user?.name || 'Unknown User'}
+  className="w-10 h-10 rounded-full"
+/>
                     <div>
                         <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                             {comment.user.name}

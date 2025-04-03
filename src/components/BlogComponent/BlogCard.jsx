@@ -23,6 +23,7 @@ const BlogCard = ({
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [posting, setPosting] = useState(false); // Posting state
+  const [blogComments, setBlogComments] = useState(comments);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -48,18 +49,22 @@ const BlogCard = ({
   };
 
   const handlePostComment = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    if (!commentText.trim()) return; // Do not submit empty comments
+    e.preventDefault();
+    if (!commentText.trim()) return;
 
     setPosting(true);
     try {
-      console.log(`${id}:`, commentText);
-      await blogService.addComment(id, commentText);
-      setCommentText(''); // Clear the textarea
-      await refreshComments(id); // Refresh comments after posting
+      const newComment = await blogService.addComment(id, commentText); // Get the new comment
+      setCommentText(""); // Clear textarea
+
+      // ✅ Update the comments state immediately
+      setBlogComments((prevComments) => [...prevComments, newComment]);
+
+      // ✅ Also refresh comments from the API
+      await refreshComments(id);
     } catch (error) {
       console.error(error);
-      alert('Failed to post comment. Please try again.');
+      alert("Failed to post comment. Please try again.");
     } finally {
       setPosting(false);
     }
@@ -72,7 +77,7 @@ const BlogCard = ({
       )
     );
   };
-  const detailuser=user;
+  const detailuser = user;
 
   const handleCommentRemoved = (removedCommentId) => {
     setCommentText((prevComments) =>
@@ -93,11 +98,11 @@ const BlogCard = ({
           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#d27511]"
         />
         <div className="ml-4">
-        <NavLink
-        to='/dashboard/profile'
-        state={{user}}
-        >
-          <h4 className="font-semibold text-md sm:text-lg text-[#2d545e]">{user.name}</h4>
+          <NavLink
+            to='/dashboard/profile'
+            state={{ user }}
+          >
+            <h4 className="font-semibold text-md sm:text-lg text-[#2d545e]">{user.name}</h4>
           </NavLink>
           <p className="text-xs sm:text-sm text-gray-600">{user.headLine}</p>
           <p className="text-xs text-gray-400">{formatDateTime(createdOn)}</p>
@@ -199,18 +204,19 @@ const BlogCard = ({
             </form>
 
             {/* Comments List */}
-            {comments.length > 0 ? (
-              comments.map((comment) =>
+            {blogComments.length > 0 ? (
+              blogComments.map((comment) => (
                 <Comment
                   key={comment.id}
                   comment={comment}
                   onCommentUpdated={handleCommentUpdated}
-                  onCommentRemoved={handleCommentRemoved} />)
+                  onCommentRemoved={handleCommentRemoved}
+                />
+              ))
             ) : (
-              <p className="mt-4 sm:mt-6 text-center text-gray-500">
-                No comments available
-              </p>
+              <p className="mt-4 sm:mt-6 text-center text-gray-500">No comments available</p>
             )}
+
           </div>
         </section>
       )}
