@@ -10,37 +10,44 @@ const HeroSection = () => {
             alt="mockup"
           />
         </div>
-        <div className="mr-auto place-self-center lg:col-span-7">
-          <h1 className="max-w-2xl mb-4 text-4xl font-bold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-            Alumni-Econnect: Stay Connected, Stay Informed
-          </h1>
-          <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-          Join your alumni community and explore opportunities for networking, events, and updates. Connect with fellow graduates who share your passion and experiences, and tap into a wealth of resources designed to enhance your professional journey.           </p>
-          <a
-            href="/userregistration"
-            className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-white bg-[#d27511] rounded-lg hover:bg-[#c4640e]"
-          >
-            Join Now
-            <svg
-              className="w-5 h-5 ml-2 -mr-1"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </a>
-          <a
-            href="/features"
-            className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-gray-500 border border-gray-300 rounded-lg hover:text-[#2d545e] hover:border-[#2d545e]"
-          >
-            Explore Now
-          </a>
-        </div>
+        <div className="lg:col-span-7 z-10">
+            <div className="max-w-2xl">
+              <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-[#f0f4f8] text-[#2d545e] mb-4">
+                Alumni Network Platform
+              </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                <span className="text-[#2d545e]">Reconnect.</span> Grow. <span className="text-[#d27511]">Thrive.</span>
+              </h1>
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                Join your lifelong academic network. Access exclusive opportunities, events, 
+                and resources designed to accelerate your professional journey through meaningful connections.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="/userregistration"
+                  className="px-8 py-3 bg-gradient-to-r from-[#2d545e] to-[#d27511] text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center font-medium"
+                >
+                  Join Now
+                  <svg
+                    className="w-4 h-4 ml-2 inline"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+                <a
+                  href="/features"
+                  className="px-8 py-3 border border-[#2d545e] text-[#2d545e] rounded-full hover:bg-[#f0f4f8] transition-colors duration-300 text-center font-medium"
+                >
+                  Explore Features
+                </a>
+              </div>
+            </div>
+          </div>
       
       </div>
     </section>

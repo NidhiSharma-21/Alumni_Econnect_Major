@@ -6,46 +6,121 @@ import AlumniEconnectFooter from '../components/FooterComponent/FooterComponent'
 
 const AboutUs = () => {
   return (
-    <>
-      {/* First section with About Us and image */}
-      <section className="py-12 mt-6 bg-[#f0f4f8]">
-        <div className="container mx-auto flex flex-wrap items-center justify-between p-8">
-          <div className="w-full md:w-1/2 p-6">
-            <h2 className="text-5xl font-extrabold text-[#2d545e] mb-6">
-              Welcome to Our Community
-            </h2>
-            <p className="text-lg leading-relaxed text-gray-700 mb-6">
-            Our mission is to create a dynamic community where alumni can stay engaged, network, and give back to the institution that shaped their journeys. We strive to foster a sense of belonging and pride among alumni by providing platforms for collaboration, mentorship, and professional development. Through innovative events, resources, and communication, we aim to bridge the gap between current students and alumni, ensuring that the wealth of knowledge and experience within our community is shared and utilized.
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="relative py-24 overflow-hidden bg-gradient-to-br from-[#f0f4f8] to-white">
+        <div className="container mx-auto px-6 flex flex-col lg:flex-row items-center">
+          <div className="lg:w-1/2 mb-12 lg:mb-0 lg:pr-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
+              Building Bridges <span className="text-[#2d545e]">Beyond</span> Campus
+            </h1>
+            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              We're creating a dynamic ecosystem where alumni connections foster growth, 
+              opportunity, and lasting impact. Our platform bridges the gap between 
+              generations of graduates, cultivating a community built on shared experience 
+              and mutual success.
             </p>
-            <a href="/" className="inline-block px-6 py-3 text-white bg-[#2d545e] rounded-full shadow-lg hover:bg-[#1a3b41] transition duration-300">
-              Learn More
-            </a>
+            <div className="flex space-x-4">
+              <button className="px-8 py-3 bg-[#2d545e] text-white rounded-full hover:bg-[#1a3b41] transition-all duration-300 transform hover:-translate-y-1 shadow-lg">
+                Join Our Network
+              </button>
+              <button className="px-8 py-3 border border-[#2d545e] text-[#2d545e] rounded-full hover:bg-[#f0f4f8] transition-colors duration-300">
+                Learn More
+              </button>
+            </div>
           </div>
-          <div className="w-full md:w-1/2 p-6">
-            <img className="w-full h-auto " src={aboutsvg} alt="About Us" />
+          <div className="lg:w-1/2">
+            <img 
+              src={aboutsvg} 
+              alt="Alumni network" 
+              className="w-full h-auto max-w-md mx-auto lg:max-w-none transform hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-white transform skew-y-1 -z-10"></div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col lg:flex-row items-center">
+            <div className="lg:w-1/2 mb-12 lg:mb-0 lg:order-2 lg:pl-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Our <span className="text-[#2d545e]">Purpose</span>
+              </h2>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="ml-3 text-gray-600">
+                    Foster lifelong connections between alumni and their alma mater
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="ml-3 text-gray-600">
+                    Create opportunities for professional growth and mentorship
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="ml-3 text-gray-600">
+                    Support current students through alumni expertise and resources
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="lg:w-1/2 lg:order-1">
+              <img 
+                src={about2} 
+                alt="Our mission" 
+                className="w-full h-auto rounded-xl shadow-xl max-w-md mx-auto lg:max-w-none"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Second section with Mission and image */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto flex flex-wrap items-center justify-between p-8">
-          <div className="w-full md:w-1/2 p-6">
-            <img className="w-full h-auto" src={about2} alt="Our Mission" />
-          </div>
-          <div className="w-full md:w-1/2 p-6">
-            <h2 className="text-5xl font-extrabold text-[#2d545e] mb-6">
-              Our Mission
-            </h2>
-            <p className="text-lg leading-relaxed text-gray-700">
-              We aim to build a vibrant and supportive alumni community for years to come, fostering connections and opportunities for personal and professional growth.We believe that by strengthening these ties, we can create a legacy of excellence and impact that benefits both our alumni and the institution as a whole. Together, we will cultivate a culture of lifelong learning, innovation, and service, ensuring that every alumni feels valued and connected.
-            </p>
+      {/* Stats Section */}
+      <section className="py-16 bg-[#f8fafc]">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="p-8 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-4xl font-bold text-[#2d545e] mb-2">10,000+</div>
+              <div className="text-gray-600">Active Alumni</div>
+            </div>
+            <div className="p-8 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-4xl font-bold text-[#2d545e] mb-2">500+</div>
+              <div className="text-gray-600">Mentorship Connections</div>
+            </div>
+            <div className="p-8 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="text-4xl font-bold text-[#2d545e] mb-2">100+</div>
+              <div className="text-gray-600">Annual Events</div>
+            </div>
           </div>
         </div>
       </section>
+
       <MeetOurTeam />
       <AlumniEconnectFooter />
-    </>
+    </div>
   );
 };
 

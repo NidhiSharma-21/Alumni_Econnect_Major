@@ -13,7 +13,6 @@ const Home = ({ isLoggedIn }) => {
         <HeroSection />
         <FeatureCard />
         <FaqMainComponent />
-        <ReachOut />
         <CTA />
         <Footer />
       </div>
