@@ -63,9 +63,10 @@ const Comment = ({ comment, onCommentUpdated, onCommentRemoved }) => {
   className="w-10 h-10 rounded-full"
 />
                     <div>
-                        <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
-                            {comment.user.name}
-                        </p>
+                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+  {comment?.user?.name || "Unknown User"}
+</p>
+
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                             <time dateTime={comment.date} title={comment.date}>
                                 {new Date(comment.date).toLocaleString()} {/* Format date */}

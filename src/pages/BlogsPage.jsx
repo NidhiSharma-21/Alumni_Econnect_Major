@@ -1,5 +1,4 @@
 // src/pages/BlogsPage.jsx
-
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import BlogCard from '../components/BlogComponent/BlogCard';
@@ -12,13 +11,29 @@ const BlogsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Filter states
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [dateRange, setDateRange] = useState({ start: null, end: null });
   const [searchTerm, setSearchTerm] = useState('');
 
   const location = useLocation();
+
+  const refreshComments = async (blogId) => {
+    try {
+      const updatedComments = await blogService.getComments(blogId);
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((blog) =>
+          blog.id === blogId
+            ? { ...blog, comments: updatedComments, commentsCount: updatedComments.length }
+            : blog
+        )
+      );
+      return updatedComments;
+    } catch (error) {
+      console.error(`Error refreshing comments for blog ID ${blogId}:`, error);
+      return [];
+    }
+  };
 
   useEffect(() => {
     const getBlogs = async () => {
@@ -30,8 +45,7 @@ const BlogsPage = () => {
             try {
               const comments = await blogService.getComments(blog.id);
               return { ...blog, comments, commentsCount: comments.length };
-            } catch (error) {
-              console.error(`Error fetching comments for blog ID ${blog.id}:`, error);
+            } catch {
               return { ...blog, commentsCount: 0, comments: [] };
             }
           })
@@ -66,20 +80,22 @@ const BlogsPage = () => {
 
   const isCreatePage = location.pathname === '/dashboard/blog/create';
 
-  const tagsOptions = Array.from(new Set(blogs.flatMap((blog) => blog.tags.map((tag) => tag.name))))
-    .map((tag) => ({ value: tag, label: tag }));
+  const tagsOptions = Array.from(new Set(blogs.flatMap((blog) => blog.tags.map((tag) => tag.name)))).map((tag) => ({
+    value: tag,
+    label: tag,
+  }));
 
-  const authorsOptions = Array.from(new Set(blogs.map((blog) => blog.user.name)))
-    .map((author) => ({ value: author, label: author }));
+  const authorsOptions = Array.from(new Set(blogs.map((blog) => blog.user.name))).map((author) => ({
+    value: author,
+    label: author,
+  }));
 
   useEffect(() => {
     let tempBlogs = [...blogs];
 
     if (selectedTags.length > 0) {
       const selectedTagNames = selectedTags.map((tag) => tag.value);
-      tempBlogs = tempBlogs.filter((blog) =>
-        blog.tags.some((tag) => selectedTagNames.includes(tag.name))
-      );
+      tempBlogs = tempBlogs.filter((blog) => blog.tags.some((tag) => selectedTagNames.includes(tag.name)));
     }
 
     if (selectedAuthor) {
@@ -95,9 +111,10 @@ const BlogsPage = () => {
 
     if (searchTerm.trim() !== '') {
       const lowerSearchTerm = searchTerm.toLowerCase();
-      tempBlogs = tempBlogs.filter((blog) =>
-        (blog.name?.toLowerCase().includes(lowerSearchTerm) || 
-         blog.description?.toLowerCase().includes(lowerSearchTerm))
+      tempBlogs = tempBlogs.filter(
+        (blog) =>
+          blog.name?.toLowerCase().includes(lowerSearchTerm) ||
+          blog.description?.toLowerCase().includes(lowerSearchTerm)
       );
     }
 
@@ -140,7 +157,7 @@ const BlogsPage = () => {
                 commentsCount={blog.commentsCount}
                 comments={blog.comments}
                 createdOn={blog.createdOn}
-                
+                refreshComments={refreshComments} // ✅ Pass refresh function
               />
             ))
           ) : (
