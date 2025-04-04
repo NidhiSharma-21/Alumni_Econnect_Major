@@ -27,8 +27,7 @@ const UserRegistration = () => {
     setCourses([]);
     setBranches([]);
     setCourse(null);
-    // Navigate to default page (home)
-    navigate('/');
+   
   };
 
   const handleBackToStep1 = () => {
@@ -61,7 +60,6 @@ const UserRegistration = () => {
         toast.error("This email domain is not associated with any registered college.", {
           position: "top-center",
           autoClose: 5000,
-          onClose: resetFormAndNavigate // Reset and navigate on close
         });
         return;
       }

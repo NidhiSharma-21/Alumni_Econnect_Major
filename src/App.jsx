@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import NavDash from "./components/Navbar/NavDash"; // Import Navbar
+import NavbarSelector from "./components/Navbar/NavbarSelector"; // Replace NavDash with NavbarSelector
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CreateAccount from "./pages/AdminRegistration";
 import CollegeRegistration from "./pages/CollegeFunctionalites";
 import AboutUs from "./pages/AboutUs";
 import UserRegistration from "./pages/UserRegistration";
-import FeatureSection from "./components/FeaturesCard/Feature";
 import AlumniFeatures from "./pages/Features";
 import FacultyRegistration from "./pages/FacultyRegistration";
-
 import BlogsPage from "./pages/BlogsPage";
 import BlogEditor from "./pages/BlogCreate";
-// import DashNavbar from "./pages/DashBoard/DashboardNav";
 import DashboardPage from "./pages/DashBoard/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EventShow from "./pages/DashBoard/EventShow";
@@ -22,72 +19,60 @@ import JobPostForm from "./pages/JobPostForm";
 import JobPostShow from "./pages/JobPostCard";
 import ProfilePage from "./pages/DashBoard/ProfilePage";
 import PageNotFound from "./pages/PageNotFound";
+import ContactUs from "./pages/ContactUsPage";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Check authentication status on initial load
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <div className="">
-      {/* Pass the login state to NavDash */}
-      <NavDash isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      {/* Use NavbarSelector which will automatically show the appropriate navbar */}
+      <NavbarSelector />
 
       {/* Define application routes */}
       <Routes>
-        {/* Home route (accessible to all users) */}
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
-        
-        {/* Login route (passes setIsLoggedIn to change login state upon login) */}
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/adminaccount" element={<CreateAccount />} />
+        <Route path="/features" element={<AlumniFeatures />} />
+        <Route path="/collegefunctions" element={<CollegeRegistration />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/userregistration" element={<UserRegistration />} />
+        <Route path="/facultyregistration" element={<FacultyRegistration />} />
+        <Route path="/contact" element={<ContactUs/>} />
 
-        {/* Signup route (passes setIsLoggedIn to change login state upon signup) */}
-        <Route path="/adminaccount" element={<CreateAccount/>} />
-        <Route path="/features" element={<AlumniFeatures/>} />
-        <Route path="/collegefunctions" element={<CollegeRegistration/>} />
-        <Route path="/about" element={<AboutUs/>}/>
-        
-        {/* User Registration route */}
-        <Route path="/userregistration" element={<UserRegistration/>}/>
-        {/* <Route path="/event" element={<Event/>} /> */}
+        {/* Protected dashboard routes */}
         <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      >
-        {/* Nested Routes */}
-        <Route index element={<Navigate to="blog" replace />} /> {/* Default when /dashboard is accessed */}
-        <Route path="blog" element={<BlogsPage />} >
-        <Route path="create" element={<BlogEditor />} />
-
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="blog" replace />} />
+          <Route path="blog" element={<BlogsPage />}>
+            <Route path="create" element={<BlogEditor />} />
+          </Route>
+          <Route path="eventshow" element={<EventShow />} />
+          <Route path="eventshow/eventCreate" element={<EventForm />} />
+          <Route path="jobpost" element={<JobPostShow />} />
+          <Route path="jobpost/jobform" element={<JobPostForm />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
-        <Route path="eventshow" element={<EventShow/>} />
-        <Route path="eventshow/eventCreate" element={<EventForm/>} />
 
-        <Route path="jobpost" element={<JobPostShow/>}/>
-        <Route path="jobpost/jobform" element={<JobPostForm/>}/>
-        <Route path="profile" element={<ProfilePage/>}/>
-
-        
-        {/* <Route path="jobpost" element={<Jobpost />} /> */}
-      </Route>
-
-        
-        
-        {/* Faculty Registration route */}
-        <Route path="/facultyregistration" element={<FacultyRegistration/>}/>
-          
         {/* 404 Page route */}
-        <Route path="/*" element={<PageNotFound/>} />
-        {/*Bloge route*/ }
-        
-        
-
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </div>
   );
 };
 
 export default App;
- 

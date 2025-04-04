@@ -1,127 +1,126 @@
 import {
-  ArrowPathIcon,
+  UsersIcon,
   CloudArrowUpIcon,
   FingerPrintIcon,
-  UsersIcon,
+  ArrowPathIcon,
   AcademicCapIcon,
-  BriefcaseIcon,
   ChatBubbleLeftRightIcon,
+  BriefcaseIcon,
   ClipboardDocumentCheckIcon,
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 
 const features = [
   {
-    name: "Connect with Alumni",
-    description:
-      "Easily find and connect with alumni from your school or university. Engage in meaningful conversations, share experiences, and expand your network.",
+    name: "Global Alumni Network",
+    description: "Connect with graduates worldwide across industries and generations.",
     icon: UsersIcon,
   },
   {
     name: "Real-time Updates",
-    description:
-      "Stay up-to-date with the latest news and updates from your alumni community. Receive notifications for important events and updates directly to your dashboard.",
+    description: "Instant notifications for events, news, and community activities.",
     icon: CloudArrowUpIcon,
   },
   {
-    name: "Secure Platform",
-    description:
-      "Your data is protected with state-of-the-art security measures. Enjoy peace of mind while connecting with alumni in a trusted environment.",
+    name: "Enterprise Security",
+    description: "End-to-end encrypted platform protecting your data and privacy.",
     icon: FingerPrintIcon,
   },
   {
-    name: "Track Your Journey",
-    description:
-      "Keep track of your professional journey and milestones. Showcase your achievements and help inspire fellow alumni on the platform.",
+    name: "Career Tracker",
+    description: "Visualize your professional journey and milestones over time.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Alumni Registration",
-    description:
-      "Allow alumni to register, update their profiles, and connect with others on the platform.",
+    name: "Verified Profiles",
+    description: "Authenticated alumni profiles ensuring genuine connections.",
     icon: AcademicCapIcon,
   },
   {
-    name: "Networking Hub",
-    description:
-      "Connect alumni based on shared interests, profession, or location.",
+    name: "Smart Networking",
+    description: "AI-powered suggestions for relevant connections and opportunities.",
     icon: ChatBubbleLeftRightIcon,
   },
   {
-    name: "Job Portal",
-    description:
-      "Provide job search and posting features for career advancement among alumni.",
+    name: "Exclusive Job Board",
+    description: "Curated career opportunities shared by fellow alumni.",
     icon: BriefcaseIcon,
   },
   {
-    name: "Alumni Directory",
-    description:
-      "Search and filter alumni by different criteria using the comprehensive directory.",
+    name: "Advanced Directory",
+    description: "Filter alumni by industry, location, skills, and graduation year.",
     icon: ClipboardDocumentCheckIcon,
   },
   {
-    name: "Success Story Tracking",
-    description:
-      "Showcase alumni achievements and inspire others with success stories.",
+    name: "Success Stories",
+    description: "Featured alumni achievements to inspire the community.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Events and Reunions",
-    description:
-      "Announce and manage alumni events and reunions for easier networking.",
+    name: "Virtual Events",
+    description: "Global reunions, workshops, and networking sessions.",
     icon: CalendarIcon,
   },
   {
-    name: "Chat Section",
-    description:
-      "Enable real-time communication with a chat section for efficient alumni interaction.",
+    name: "Direct Messaging",
+    description: "Secure 1:1 and group conversations with alumni worldwide.",
     icon: ChatBubbleLeftRightIcon,
   },
   {
-    name: "Data Management",
-    description:
-      "Authority/College officials can manage user data efficiently on the platform.",
+    name: "Admin Dashboard",
+    description: "Comprehensive tools for alumni association management.",
     icon: ClipboardDocumentCheckIcon,
   },
 ];
 
 export default function AlumniFeatures() {
   return (
-    <div className="bg-[#2d545e] py-24 sm:py-32">
+    <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className=" text-md lg:text-2xl font-bold leading-7 text-[#d27511]">
-            Unlock Opportunities Through Your Alumni Network.
+          <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-[#f0f4f8] text-[#2d545e] mb-4">
+            Alumni Ecosystem
+          </span>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Your <span className="text-[#2d545e]">Lifelong</span> Network
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Stay connected, stay informed
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-300">
-            Join a thriving community of alumni, get updates, and track your
-            journey in a secure, user-friendly platform.
+          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            A premium platform designed to maintain and strengthen your academic connections throughout your career.
           </p>
         </div>
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16 cursor-pointer">
-            {features.map((feature) => (
-              <div
-                key={feature.name}
-                className="relative pl-16 flex items-center space-x-4"
-              >
-                <div className="absolute left-0 top-0 h-12 w-12 bg-[#d27511] flex items-center justify-center rounded-lg">
-                  <feature.icon className="h-6 w-6 text-white" />
+
+        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature) => (
+            <div 
+              key={feature.name}
+              className="group relative rounded-xl p-6 transition-all duration-300 hover:bg-[#f8fafc] hover:shadow-lg border border-gray-100"
+            >
+              <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#2d545e] to-[#d27511] opacity-0 group-hover:opacity-20 blur transition duration-300"></div>
+              <div className="relative flex flex-col h-full">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-[#f0f4f8] flex items-center justify-center group-hover:bg-[#2d545e] group-hover:text-white transition-colors duration-300">
+                    <feature.icon className="h-6 w-6 text-[#2d545e] group-hover:text-white transition-colors duration-300" />
+                  </div>
                 </div>
-                <div>
-                  <dt className="text-base font-semibold text-white">
-                    {feature.name}
-                  </dt>
-                  <dd className="text-sm text-gray-300">
-                    {feature.description}
-                  </dd>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.name}</h3>
+                <p className="text-gray-600 flex-grow">{feature.description}</p>
+                <div className="mt-4">
+                  <span className="inline-flex items-center text-sm font-medium text-[#2d545e] group-hover:text-[#d27511] transition-colors duration-300">
+                    Learn more
+                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
                 </div>
               </div>
-            ))}
-          </dl>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <button className="px-8 py-3 bg-gradient-to-r from-[#2d545e] to-[#d27511] text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            Explore All Features
+          </button>
         </div>
       </div>
     </div>

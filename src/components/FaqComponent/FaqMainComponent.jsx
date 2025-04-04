@@ -1,27 +1,37 @@
+// FaqMainComponent.js
 import React from 'react';
 import FaqComponent from './FaqComponent';
 import AlumniFaqLeftImage from '../../assets/FaqLeft.png';
 
 const FaqMainComponent = () => {
   return (
-    <div className="w-full min-h-screen flex flex-col items-center">
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#2d545e] mt-24 mb-14">
-        CURIOSITY CORNER..
-      </h1>
-      <div className="flex flex-col md:flex-row w-full max-w-7xl">
-        <div className="w-full h-auto md:w-1/2 flex items-center justify-center p-4">
-          <img
-            src={AlumniFaqLeftImage}
-            alt="Alumni Econnect"
-            className="object-cover w-full h-full sm:w-3/4 sm:h-auto md:w-2/3 md:h-auto lg:w-[65%] lg:h-auto"  
-          />
+    <section className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#2d545e] dark:text-[#4fd1c5] mb-4">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Find answers to common questions about our alumni platform
+          </p>
         </div>
-        <div className="w-full md:w-1/2 p-4">
-          <FaqComponent />
+
+        <div className="flex flex-col lg:flex-row gap-12 items-center">
+          <div className="lg:w-1/2">
+            <img
+              src={AlumniFaqLeftImage}
+              alt="Alumni Connection"
+              className="w-full max-w-md mx-auto  object-cover"
+            />
+          </div>
+          
+          <div className="lg:w-1/2 w-full">
+            <FaqComponent />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default FaqMainComponent ;
+export default FaqMainComponent;
