@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HandThumbUpIcon, ChatBubbleLeftIcon, TrashIcon } from '@heroicons/react/24/outline';
 import './style.css';
 import Comment from './Comment';
@@ -22,6 +22,14 @@ const BlogCard = ({
   const [commentText, setCommentText] = useState('');
   const [posting, setPosting] = useState(false);
   const [blogComments, setBlogComments] = useState(comments);
+  useEffect(() => {
+    // This assumes 'comments' is passed as props
+    const initializedComments = comments.map((c) => ({
+      ...c,
+      date: c.date || new Date().toISOString(), // freeze fallback once
+    }));
+    setBlogComments(initializedComments);
+  }, [comments]);
 
   // ✅ Safe and locale-friendly date formatter
   const formatDateTime = (dateInput) => {
@@ -64,6 +72,7 @@ const BlogCard = ({
       setPosting(false);
     }
   };
+
 
   const handleCommentUpdated = (updatedComment) => {
     setBlogComments((prevComments) =>
@@ -150,8 +159,8 @@ const BlogCard = ({
 
             {/* ✅ Render Comments */}
             {blogComments.length > 0 ? (
-              blogComments.map((comment) => (
-                <Comment key={comment.id} comment={comment} onCommentUpdated={handleCommentUpdated} onCommentRemoved={handleCommentRemoved} />
+              blogComments.map((comment,i) => (
+                <Comment key={i} comment={comment} onCommentUpdated={handleCommentUpdated} onCommentRemoved={handleCommentRemoved} />
               ))
             ) : (
               <p className="mt-4 sm:mt-6 text-center text-gray-500">No comments available</p>

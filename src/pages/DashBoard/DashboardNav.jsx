@@ -221,13 +221,19 @@ const DashNavbar = () => {
           {/* Right Side: Profile and Logout */}
           <div className="flex items-center">
             <div className="hidden md:flex md:items-center md:space-x-4">
-              <button
-                onClick={() => setIsDrawerOpen(true)}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"
-              >
-                <UserCircleIcon className="h-5 w-5 mr-1" />
-                <span>Profile</span>
-              </button>
+            <NavLink
+  to="/dashboard/profile" state={{ user }}
+  onClick={() => setIsMobileMenuOpen(false)}
+  className={({ isActive }) =>
+    `flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+      isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-100'
+    }`
+  }
+>
+  <UserCircleIcon className="h-5 w-5 mr-1" />
+  Profile
+</NavLink>
+
               <button
                 onClick={handleLogout}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none"

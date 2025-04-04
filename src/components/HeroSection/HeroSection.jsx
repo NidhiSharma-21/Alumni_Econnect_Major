@@ -36,7 +36,7 @@ const HeroSection = () => {
           </a>
           <a
             href="/features"
-            className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-gray-900 border border-gray-300 rounded-lg hover:text-[#2d545e] hover:border-[#2d545e]"
+            className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-gray-500 border border-gray-300 rounded-lg hover:text-[#2d545e] hover:border-[#2d545e]"
           >
             Explore Now
           </a>

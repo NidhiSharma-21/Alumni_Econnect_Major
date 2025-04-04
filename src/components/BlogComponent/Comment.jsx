@@ -57,19 +57,24 @@ const Comment = ({ comment, onCommentUpdated, onCommentRemoved }) => {
         <article className="mb-3 text-base bg-white rounded-lg dark:bg-gray-900 p-4">
             <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                <img
-  src={comment?.user?.imageUrl || '/default-avatar.png'} // ✅ Uses default if undefined
-  alt={comment?.user?.name || 'Unknown User'}
-  className="w-10 h-10 rounded-full"
-/>
+                    <img
+                        src={comment?.user?.imageUrl || '/default-avatar.png'} // ✅ Uses default if undefined
+                        alt={comment?.user?.name || 'Unknown User'}
+                        className="w-10 h-10 rounded-full"
+                    />
                     <div>
-                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
-  {comment?.user?.name || "Unknown User"}
-</p>
+                        <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+                            {comment?.user?.name || "Unknown User"}
+                        </p>
 
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            <time dateTime={comment.date} title={comment.date}>
-                                {new Date(comment.date).toLocaleString()} {/* Format date */}
+                            <time
+                                dateTime={comment.date || new Date().toISOString()}
+                                title={comment.date || 'Date not available'}
+                            >
+                                {comment.date
+                                    ? new Date(comment.date).toLocaleString()
+                                    : new Date().toLocaleString()}
                             </time>
                         </p>
                     </div>
@@ -88,9 +93,8 @@ const Comment = ({ comment, onCommentUpdated, onCommentRemoved }) => {
                                 {({ active }) => (
                                     <button
                                         onClick={() => setIsEditModalOpen(true)}
-                                        className={`${
-                                            active ? 'bg-gray-100 dark:bg-gray-600' : ''
-                                        } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
+                                        className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''
+                                            } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
                                     >
                                         Edit
                                     </button>
@@ -101,11 +105,9 @@ const Comment = ({ comment, onCommentUpdated, onCommentRemoved }) => {
                                     <button
                                         onClick={handleRemove}
                                         disabled={isRemoving}
-                                        className={`${
-                                            active ? 'bg-gray-100 dark:bg-gray-600' : ''
-                                        } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 ${
-                                            isRemoving ? 'opacity-50 cursor-not-allowed' : ''
-                                        }`}
+                                        className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''
+                                            } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 ${isRemoving ? 'opacity-50 cursor-not-allowed' : ''
+                                            }`}
                                     >
                                         {isRemoving ? 'Removing...' : 'Remove'}
                                     </button>

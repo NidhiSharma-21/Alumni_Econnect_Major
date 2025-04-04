@@ -68,24 +68,31 @@ const ProfilePage = () => {
         <section className="mt-10">
             <div className="max-w-full mx-auto mt-6 p-4 bg-gray-100 rounded-lg shadow-lg">
                 {isOwnProfile && !isEditing && (
+                    <div className='absolute top-10 right-8'>
                     <button
                         onClick={handleEditClick}
-                        className="flex items-center bg-[#d27511] text-white pr-2 py-2 rounded-md mb-6 mt-10"
+                        className="flex items-center bg-gray-400 text-white px-2 py-2 rounded-md mb-6 mt-10"
                     >
                         <FaEdit className="mr-2" /> Edit Profile
                     </button>
+                    </div>
                 )}
+
+               
 
                 {isEditing ? (
                     <EditProfileForm detailuser={user} onSave={handleSave} />
                 ) : (
                     <>
+                    
                         <ProfileHeader
                             coverPhoto={""}
                             profilePicture={user?.profilePictureUrl}
                             name={user?.name}
                             headline={passedUser?.headline}
+                            isOwnProfile={isOwnProfile}
                         />
+                       
                         <UserDetails
                             college={user?.college}
                             location={user?.address}
