@@ -116,7 +116,8 @@ async addblog(blogData) {
             });
             return data;
         } catch (error) {
-            
+            console.error("❌ Error in addComment:", error.response?.data || error.message || error);
+            throw error; // important for UI to catch and display error
         }
     }
 
