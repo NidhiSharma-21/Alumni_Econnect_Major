@@ -8,12 +8,12 @@ const NavbarSelector = () => {
 
   useEffect(() => {
     // Check if user is logged in by checking for auth token
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token'); // Changed from 'authToken' to 'token'
     setIsLoggedIn(!!token);
     
     // Optional: Listen for storage changes to handle logout from other tabs
     const handleStorageChange = () => {
-      const updatedToken = localStorage.getItem('authToken');
+      const updatedToken = localStorage.getItem('token'); // Changed from 'authToken' to 'token'
       setIsLoggedIn(!!updatedToken);
     };
 

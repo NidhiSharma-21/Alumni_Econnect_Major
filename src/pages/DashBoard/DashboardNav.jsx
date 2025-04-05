@@ -68,12 +68,13 @@ const DashNavbar = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    // Add any other items you need to clear
-    navigate('/login');
-    window.location.reload(); 
-  };
+// In DashNavbar.js
+const handleLogout = () => {
+  localStorage.removeItem('token'); // Changed from 'authToken' to 'token'
+  localStorage.removeItem('user'); // If you're also storing user data
+  navigate('/login');
+  window.location.reload(); 
+};
 
   useEffect(() => {
     const getUserByToken = async () => {
