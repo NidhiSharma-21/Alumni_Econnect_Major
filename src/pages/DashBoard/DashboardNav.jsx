@@ -14,9 +14,11 @@ import Dropdown from '../../components/Navbar/DropDown';
 import SideDrawer from '../../components/Navbar/SideDrawer';
 import { userService } from '../../services/userServices';
 import ChatWindow from '../../components/Chats/ChatWindow';
+import { useAuth } from '../../context/AuthContext';
 
 const DashNavbar = () => {
   const navigate = useNavigate();
+  
   const handleChatToggle = () => {
     setIsChatOpen(!isChatOpen);
   };
@@ -26,7 +28,7 @@ const DashNavbar = () => {
   const [isEventDropdownOpen, setIsEventDropdownOpen] = useState(false);
   const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState([]);
+  // const [user, setUser] = useState([]);
   const [detailuser, setDetailUser] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -48,7 +50,7 @@ const DashNavbar = () => {
     { label: 'Job post', link: '/dashboard/jobpost/jobform' },
     { label: 'View Jobs', link: '/dashboard/jobpost' },
   ];
-
+  const {user, logout} = useAuth();
   // Close specific dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,25 +72,13 @@ const DashNavbar = () => {
 
 // In DashNavbar.js
 const handleLogout = () => {
-  localStorage.removeItem('token'); // Changed from 'authToken' to 'token'
-  localStorage.removeItem('user'); // If you're also storing user data
-  navigate('/login');
-  window.location.reload(); 
+  logout();
 };
 
   useEffect(() => {
-    const getUserByToken = async () => {
-      try {
-        const response = await userService.getUserByToken();
-        setUser(response);
-        const Userid = response.id;
-        const deresponse = await userService.getDetailsUserById(Userid);
-        setDetailUser(deresponse);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getUserByToken();
+    if(user){
+      setDetailUser(user);
+    }
   }, []);
 
   return (

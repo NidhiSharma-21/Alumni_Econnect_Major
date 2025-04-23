@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import svg from '../assets/login.svg';
 import { useNavigate } from 'react-router-dom';
-import { userService } from '../services/userServices';
 import { useForm } from 'react-hook-form';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext.jsx';
+import { Loader } from 'lucide-react';
 
 const roleMapping = {
   student: 0,
@@ -13,6 +14,8 @@ const roleMapping = {
 };
 
 const Login = () => {
+  const {loading, user, login} = useAuth();
+
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [apiError, setApiError] = useState('');
@@ -28,16 +31,7 @@ const Login = () => {
     setApiError('');
     try {
       const mappedRole = roleMapping[data.role];
-      const response = await userService.loginUser(data.Email, data.Password, mappedRole);
-      
-      if (response && response.token) {
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('userRole', response.role);
-        localStorage.setItem('userId', response.user.id);
-        navigate('/dashboard');
-      } else {
-        setApiError(response?.message || 'Login failed, please try again.');
-      }
+      await login(data.Email, data.Password, mappedRole);
     } catch (error) {
       console.error('Login error:', error);
       setApiError(error.response?.data?.message || 'Something went wrong, please try again later.');
@@ -48,7 +42,22 @@ const Login = () => {
 
   const handleSignUpRedirect = () => navigate('/userregistration');
   const handleForgotPassword = () => navigate('/forgot-password');
-
+  
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [loading, user, navigate]);  
+  if(loading){
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+  if (!loading && user) {
+    return null; // Prevent rendering the login page if user is authenticated
+  }
   return (
     <section className="bg-white min-h-screen mt-16">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">

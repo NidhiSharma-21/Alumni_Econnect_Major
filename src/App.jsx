@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import NavbarSelector from "./components/Navbar/NavbarSelector"; // Replace NavDash with NavbarSelector
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import NavbarSelector from "./components/Navbar/NavbarSelector";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CreateAccount from "./pages/AdminRegistration";
@@ -20,33 +20,26 @@ import JobPostShow from "./pages/JobPostCard";
 import ProfilePage from "./pages/DashBoard/ProfilePage";
 import PageNotFound from "./pages/PageNotFound";
 import ContactUs from "./pages/ContactUsPage";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check authentication status on initial load
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    setIsLoggedIn(!!token);
-  }, []);
-
   return (
     <div className="">
-      {/* Use NavbarSelector which will automatically show the appropriate navbar */}
+      {/* NavbarSelector automatically shows the appropriate navbar */}
       <NavbarSelector />
 
       {/* Define application routes */}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/adminaccount" element={<CreateAccount />} />
         <Route path="/features" element={<AlumniFeatures />} />
         <Route path="/collegefunctions" element={<CollegeRegistration />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/userregistration" element={<UserRegistration />} />
         <Route path="/facultyregistration" element={<FacultyRegistration />} />
-        <Route path="/contact" element={<ContactUs/>} />
+        <Route path="/contact" element={<ContactUs />} />
 
         {/* Protected dashboard routes */}
         <Route
@@ -75,4 +68,11 @@ const App = () => {
   );
 };
 
-export default App;
+// Wrap App with AuthProvider
+const AppWithAuth = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+
+export default AppWithAuth;
